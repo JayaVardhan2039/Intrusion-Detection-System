@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intrusion Detection - Predict</title>
+    <link rel="stylesheet" href="/static/style.css"> <!-- Optional CSS file -->
+</head>
+<body>
+    <h2>Intrusion Detection Prediction</h2>
+    <form action="/predict" method="POST" enctype="multipart/form-data">
+        <label for="file">Upload CSV File (One Row):</label>
+        <input type="file" name="file" accept=".csv" required><br><br>
+        <input type="submit" value="Predict">
+    </form>
+    <br>
+    <a href="/logout">Logout</a>
+</body>
+</html>
