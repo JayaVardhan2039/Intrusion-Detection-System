@@ -180,7 +180,7 @@ def predict():
 
         if shap_values_single.ndim == 1:
             shap_values_single = shap_values_single.reshape(1, -1)
-
+        
         # Create SHAP Explanation Object
         shap_explanation = shap.Explanation(
             values=shap_values_single[0],
@@ -188,6 +188,37 @@ def predict():
             data=features_pca[0],
             feature_names=[f"PC{i+1}" for i in range(features_pca.shape[1])]
         )
+        # Add this after generating SHAP values but before rendering the template
+
+        # 1. Waterfall plot explanation
+        waterfall_text = (
+            f"This waterfall plot shows how each principal component contributes to pushing the model's output "
+            f"from the base value ({base_value:.2f}) to the final prediction. Values above zero increase "
+            f"the likelihood of this prediction, while values below zero decrease it."
+        )
+        
+        # 2. Summary bar plot explanation
+        top_pcs = np.argsort(np.abs(shap_values_single).mean(0))[::-1][:3]  # Top 3 components
+        bar_text = (
+            f"The most significant principal components influencing this prediction were: "
+            f"{', '.join([f'PC{i+1} ({shap_values_single[0,i]:.2f})' for i in top_pcs])}. "
+            "Longer bars indicate greater impact on the model's decision."
+        )
+        
+        # 3. PCA component interpretation (if you have access to original feature loadings)
+        # Modified code to explain top 3 PCs
+        try:
+            pca_loadings = pca.components_
+            pc_text = "Key original features contributing to principal components: "
+            for i in range(10):  # For PC1, PC2, PC3
+                top_features = np.argsort(np.abs(pca_loadings[i]))[::-1][:3]
+                pc_text += (
+                    f"PC{i+1} uses {expected_features[top_features[0]]}, "
+                    f"{expected_features[top_features[1]]}, {expected_features[top_features[2]]}. "
+                )
+        except Exception as e:
+            pc_text = "Principal components combine original network features"
+
         
         # Generate SHAP Waterfall Plot
         plt.figure()
@@ -230,7 +261,28 @@ def predict():
             rotated_img = img.rotate(90, expand=True)  # Rotate and expand to fit the image
             rotated_img.save(shap_plot_path2)  # Save the rotated image
 
-
+        # Global explanation text
+        try:
+            # Calculate mean absolute SHAP values across all classes
+            if isinstance(shap_values, list):
+                shap_array = np.array(shap_values)  # Convert list to array for multi-class
+                global_mean_shap = np.abs(shap_array).mean(axis=(0, 1))
+            else:
+                global_mean_shap = np.abs(shap_values).mean(axis=0)
+            
+            # Get top 3 components
+            top_global_indices = np.argsort(global_mean_shap)[::-1][:3]
+            top_global_pcs = [f"PC{i+1}" for i in top_global_indices]
+            
+            # Create explanation text
+            global_explanation = (
+                f"The model's decisions are primarily driven by these principal components: "
+                f"{', '.join(top_global_pcs)}. These components capture the most significant "
+                "network traffic patterns for intrusion detection across all predictions."
+            )
+        except Exception as e:
+            print(f"Global explanation error: {str(e)}")
+            global_explanation = "Overall model decisions are influenced by combinations of network traffic characteristics."
 
         # Get actual attack labels from the trained model
         attack_labels = {i: label for i, label in enumerate(model.classes_)}  # Dynamically map indices to names
@@ -251,7 +303,11 @@ def predict():
                                precaution=precaution_message,  
                                shap_img=shap_plot_path,
                               shap_img1=shap_plot_path1,
-                              shap_img2=shap_plot_path2)
+                              shap_img2=shap_plot_path2,
+                              waterfall_explanation=waterfall_text,
+                              bar_explanation=bar_text,
+                              pca_interpretation=pc_text,
+                              global_explanation=global_explanation)
            
     except Exception as e:
         return f"Error: {str(e)}"

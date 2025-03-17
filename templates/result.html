@@ -19,12 +19,22 @@
         <p>{{ precaution }}</p>
     </div>
 
-    <h4>Explainable AI (SHAP Plot)</h4>
-    
+    <h4>Explainable AI (SHAP Plot and LIME Xpl)</h4>
+    <div class="global-explanations">
+    <h3>Global Feature Importance</h3>
     <img src="{{ shap_img }}" alt="SHAP Explanation" class="img-fluid mt-3" style="max-width: 80%;">
-    <img src="{{ shap_img1 }}" alt="SHAP Explanation" class="img-fluid mt-3" style="max-width: 80%;" >
+    <p>{{ global_explanation }}</p>
+    <p>This shows which principal components most influence model decisions overall</p>
+    </div>
+    <h3>Local Feature Importance</h3>
     
+    <img src="{{ shap_img1 }}" alt="SHAP Explanation" class="img-fluid mt-3" style="max-width: 80%;" >
+    <p>{{ waterfall_explanation }}</p>
     <img src="{{ shap_img2 }}" alt="SHAP Explanation" class="img-fluid mt-3" style="max-width: 60%;max-height:50%;" >
+    <p>{{ bar_explanation }}</p>
+    <p>{{ pca_interpretation }}</p>
+</div>
+    
     <div class="mt-4">
         <a href="/predict" class="btn btn-primary">Try Again</a>
         <a href="/logout" class="btn btn-danger">Logout</a>
