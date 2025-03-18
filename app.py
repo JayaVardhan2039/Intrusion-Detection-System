@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
 import numpy as np
 import shap
 import matplotlib
@@ -27,6 +27,10 @@ app.secret_key = 'your_secret_key'
 
 # Login credentials
 users = {"admin": "jayavardhan"}
+
+@app.route('/static0/<path:filename>')
+def static0(filename):
+    return send_from_directory('static0', filename)
 
 @app.route('/')
 def home():

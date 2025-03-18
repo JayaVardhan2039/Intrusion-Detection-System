@@ -7,14 +7,19 @@
     <link rel="stylesheet" href="/static/style.css"> <!-- Optional CSS file -->
 </head>
 <body>
-    <div style="display: flex; justify-content: center; gap: 10px;">
-        <img src="/static0/accuracy_analysis.png" alt="accuracy_analysis" style="width: 150px; height: auto;">
-        <img src="/static0/labels.png" alt="labels" style="width: 150px; height: auto;">
-        <img src="/static0/loggedin.png" alt="loggedin" style="width: 150px; height: auto;">
-        <img src="/static0/protocol_type.png" alt="protocol_type" style="width: 150px; height: auto;">
-        <img src="/static0/testing_time_analysis.png" alt="testing_time_analysis" style="width: 150px; height: auto;">
-        <img src="/static0/training_time_analysis.png" alt="training_time_analysis" style="width: 150px; height: auto;">
-    </div>
+    <h1>Model Performance Metics and Distribution</h1>
+        <img src="/static0/singleacc.png" alt="singleacc" style="width: 50%;">
+        <img src="/static0/accuracy_analysis.png" alt="accuracy_analysis" style="width: 50%;">
+        <img src="/static0/testing_time_analysis.png" alt="testing_time_analysis" style="width: 50%;">
+        <img src="/static0/training_time_analysis.png" alt="training_time_analysis" style="width: 50%;">
+        <h1>Training Dataset Distribution</h1>
+        <img src="/static0/labels.png" alt="labels" style="width: 50%;">
+        <img src="/static0/loggedin.png" alt="loggedin" style="width: 50%;">
+        <img src="/static0/protocol_type.png" alt="protocol_type" style="width: 50%;">
+        <img src="/static0/ConfMat.png" alt="ConfMat" style="width: 50%;">
+        <img src="/static0/heatmapcorr.png" alt="heatmapcorr" style="width: 50%;">
+        
+
     <h2>Intrusion Detection Prediction</h2>
     <form action="/predict" method="POST" enctype="multipart/form-data">
         <label for="file">Upload CSV File (One Row):</label>
