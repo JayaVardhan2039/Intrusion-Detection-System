@@ -34,9 +34,15 @@
     <p>{{ bar_explanation }}</p>
     <p>{{ pca_interpretation }}</p>
 
-    <h3>LIME Explanation</h3>
-    <img src="{{ lime_img }}" alt="LIME Explanation" class="img-fluid mt-3" style="max-width: 80%;">
-    <p>{{ lime_explanation }}</p>
+    <div class="alert alert-secondary">
+        <h5>Feature Importance (LIME(Local Interpretable Model-agnostic Explanation) Explanation):</h5>
+        {{ lime_html|safe }}
+    </div>
+
+    <div class="alert alert-secondary mt-3">
+        <h5>Textual Explanation:</h5>
+        <pre>{{ lime_text }}</pre>
+    </div>
 </div>
     
     <div class="mt-4">

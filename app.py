@@ -6,6 +6,8 @@ matplotlib.use('Agg')  # Non-GUI backend
 import matplotlib.pyplot as plt
 import joblib
 import pandas as pd
+import lime
+import lime.lime_tabular
 import os
 from PIL import Image
 
@@ -89,6 +91,75 @@ def predict():
         if not all(feature in df.columns for feature in expected_features):
             return "CSV file is missing some required features"
         
+
+        # Collect and process input data
+        feature_values = []
+        for feature in expected_features:
+            value = df[feature].values[0]
+            if feature in label_encoders:
+                try:
+                    value = label_encoders[feature].transform([value])[0]
+                except ValueError:
+                    return f"Error: Unknown value '{value}' for '{feature}'"
+            feature_values.append(float(value))
+        
+        features = np.array(feature_values).reshape(1, -1)
+        
+        # Convert features to a DataFrame with column names before scaling
+        features_df = pd.DataFrame(features, columns=expected_features)
+        features_scaled = scaler.transform(features_df)
+        features_pca = pca.transform(features_scaled)
+        
+        # Make prediction
+        prediction = model.predict(features_pca)[0]
+        prediction_proba = model.predict_proba(features_pca).max() * 100
+
+        try:
+            # Define the prediction function for LIME
+            def predict_fn(x):
+                x_scaled = scaler.transform(x)
+                x_pca = pca.transform(x_scaled)
+                return model.predict_proba(x_pca)
+
+            # Initialize LIME explainer (use encoded feature_values as training data)
+            explainer = lime.lime_tabular.LimeTabularExplainer(
+                training_data=features_df.values,  # Use DataFrame values with feature names
+                feature_names=expected_features,
+                class_names=label_encoders['labels'].classes_,
+                mode='classification',
+                discretize_continuous=False
+            )
+
+            # Generate explanation for the instance
+            exp = explainer.explain_instance(
+                features[0], 
+                predict_fn, 
+                num_features=10,
+                top_labels=1
+            )
+            exp_html = exp.as_html()
+
+            # Extract textual explanation
+            lime_explanation_text = exp.as_list(label=exp.available_labels()[0])
+            
+            # Generate an informative explanation
+            lime_explanation_informative = []
+            for feature, weight in lime_explanation_text:
+                impact = "positively" if weight > 0 else "negatively"
+                lime_explanation_informative.append(
+                    f"The feature '{feature}' {impact} influenced the prediction with a weight of {abs(weight):.4f}."
+                )
+            
+            lime_explanation_text = "\n".join(lime_explanation_informative)
+
+        except Exception as e:
+            exp_html = f"Could not generate explanation: {str(e)}"
+            lime_explanation_text = f"Could not generate explanation: {str(e)}"
+        
+
+
+
+
         # Collect and process input data
         feature_values = []
         for feature in expected_features:
@@ -111,50 +182,50 @@ def predict():
         
         # Precaution messages
         precaution = {
-            11: "No intrusion detected. Continue monitoring network activity for potential threats.",
-    
-            1: "Buffer overflow detected. Implement stack canaries, address space layout randomization (ASLR), and non-executable memory protection. Regularly update and patch vulnerable software.",
-            
-            2: "Unauthorized FTP write access detected. Restrict file upload permissions, enforce strong authentication (SFTP/FTPS), and monitor FTP logs for unusual activity.",
-            
-            3: "Brute-force password attack detected. Implement account lockout policies, use CAPTCHA for login attempts, enable multi-factor authentication (MFA), and monitor failed login attempts.",
-            
-            4: "IMAP attack detected. Enforce strong passwords and MFA, disable plain-text authentication, and use encrypted IMAP connections (IMAPS) to protect email access.",
-            
-            5: "Network reconnaissance (IP sweep) detected. Deploy Intrusion Detection and Prevention Systems (IDPS), monitor for unusual network scanning behavior, and use firewall rules to block repeated scan attempts.",
-            
-            6: "Land attack detected. Configure firewalls to block packets where the source and destination addresses are the same, and update the network stack to prevent exploitation.",
-            
-            7: "Loadable kernel module attack detected. Disable unnecessary kernel module loading, use Secure Boot, enforce strict kernel module signing, and regularly audit running modules.",
-            
-            8: "Multi-hop attack detected. Restrict proxy chaining, limit external connections from internal systems, and enforce network segmentation to prevent unauthorized access.",
-            
-            9: "SYN flood (DoS) attack detected. Enable SYN cookies, deploy rate limiting, use load balancers, and configure firewalls to block excessive half-open connections.",
-            
-            10: "Port scanning detected. Implement IP-based rate limiting, use network behavior analysis tools, and restrict unnecessary open ports with firewall rules.",
-            
-            12: "Perl script exploit detected. Restrict execution of server-side scripts, apply input validation and sanitization, and disable outdated CGI scripting when not needed.",
-            
-            13: "Phf vulnerability attack detected. Disable vulnerable CGI scripts, patch web servers, and enforce strict access control for web applications.",
-            
-            14: "Ping of Death attack detected. Configure firewalls to filter oversized ICMP packets, update the network stack to prevent vulnerability exploitation, and monitor ICMP traffic patterns.",
-            
-            15: "Port sweep detected. Deploy honeypots to detect scanning attempts, implement firewall rules to block scanning IPs, and conduct network traffic analysis for early detection.",
-            
-            16: "Rootkit activity detected. Use file integrity monitoring tools, deploy endpoint detection and response (EDR) solutions, and periodically scan systems for rootkit infections.",
-            
-            17: "Satan vulnerability scan detected. Regularly patch vulnerabilities, disable unnecessary services, and conduct internal penetration testing to assess security weaknesses.",
-            
-            18: "Smurf attack detected. Disable ICMP broadcast responses, configure anti-spoofing rules in firewalls, and implement network ingress/egress filtering.",
-            
-            19: "Spyware detected. Deploy endpoint security solutions, restrict software installation rights for users, and educate employees on phishing threats and suspicious downloads.",
-            
-            20: "Teardrop attack detected. Patch operating systems and networking devices to prevent fragmented packet vulnerabilities, and configure firewalls to block malformed packet sequences.",
-            
-            21: "Unauthorized warez client activity detected. Monitor file transfer logs, restrict anonymous FTP access, and enforce network usage policies to prevent illegal file sharing.",
-            
-            22: "Warezmaster intrusion detected. Strengthen authentication mechanisms for FTP services, implement strict access control policies, and regularly audit file-sharing services for unauthorized activities."
-        }
+    11: "No intrusion detected. Continue monitoring network activity for potential threats.",
+
+    1: "Buffer Overflow Attack (User-to-Root - U2R): Buffer overflow detected. Implement stack canaries, address space layout randomization (ASLR), and non-executable memory protection. Regularly update and patch vulnerable software. \n\nExplanation: A buffer overflow attack occurs when an attacker sends more data to a program than it can handle, causing it to overwrite adjacent memory. This can lead to arbitrary code execution, crashes, or privilege escalation.",
+
+    2: "Unauthorized FTP Write Attack (Remote-to-Local - R2L): Unauthorized FTP write access detected. Restrict file upload permissions, enforce strong authentication (SFTP/FTPS), and monitor FTP logs for unusual activity. \n\nExplanation: This attack involves exploiting misconfigured FTP servers to upload malicious files, which can be used to compromise the system or distribute malware.",
+
+    3: "Brute-Force Password Attack (Remote-to-Local - R2L): Brute-force password attack detected. Implement account lockout policies, use CAPTCHA for login attempts, enable multi-factor authentication (MFA), and monitor failed login attempts. \n\nExplanation: Attackers systematically try multiple password combinations to gain unauthorized access to accounts or systems.",
+
+    4: "IMAP Exploitation Attack (Remote-to-Local - R2L): IMAP attack detected. Enforce strong passwords and MFA, disable plain-text authentication, and use encrypted IMAP connections (IMAPS) to protect email access. \n\nExplanation: Attackers exploit vulnerabilities in IMAP services to gain unauthorized access to email accounts, often through weak authentication mechanisms.",
+
+    5: "IP Sweep (Probing/Scanning): Network reconnaissance (IP sweep) detected. Deploy Intrusion Detection and Prevention Systems (IDPS), monitor for unusual network scanning behavior, and use firewall rules to block repeated scan attempts. \n\nExplanation: IP sweeps are used to identify active hosts on a network, often as a precursor to more targeted attacks.",
+
+    6: "Land Attack (Denial of Service - DoS): Land attack detected. Configure firewalls to block packets where the source and destination addresses are the same, and update the network stack to prevent exploitation. \n\nExplanation: A land attack sends spoofed TCP SYN packets with identical source and destination IPs, causing the target system to crash or freeze.",
+
+    7: "Loadable Kernel Module (LKM) Attack (User-to-Root - U2R): Loadable kernel module attack detected. Disable unnecessary kernel module loading, use Secure Boot, enforce strict kernel module signing, and regularly audit running modules. \n\nExplanation: Attackers load malicious kernel modules to gain root-level access or hide their presence on the system.",
+
+    8: "Multi-Hop Attack (Remote-to-Local - R2L): Multi-hop attack detected. Restrict proxy chaining, limit external connections from internal systems, and enforce network segmentation to prevent unauthorized access. \n\nExplanation: Attackers use multiple compromised systems to hide their origin and gain access to sensitive systems.",
+
+    9: "SYN Flood (Denial of Service - DoS): SYN flood (DoS) attack detected. Enable SYN cookies, deploy rate limiting, use load balancers, and configure firewalls to block excessive half-open connections. \n\nExplanation: A SYN flood overwhelms a target system with half-open TCP connections, exhausting resources and causing denial of service.",
+
+    10: "Port Scanning Attack (Probing/Scanning): Port scanning detected. Implement IP-based rate limiting, use network behavior analysis tools, and restrict unnecessary open ports with firewall rules. \n\nExplanation: Port scanning is used to identify open ports and services on a target system, often as a precursor to exploitation.",
+
+    12: "Perl Script Exploit Attack (User-to-Root - U2R): Perl script exploit detected. Restrict execution of server-side scripts, apply input validation and sanitization, and disable outdated CGI scripting when not needed. \n\nExplanation: Attackers exploit vulnerabilities in Perl scripts to execute arbitrary code or gain unauthorized access to the system.",
+
+    13: "Phf Vulnerability Attack (Remote-to-Local - R2L): Phf vulnerability attack detected. Disable vulnerable CGI scripts, patch web servers, and enforce strict access control for web applications. \n\nExplanation: The phf vulnerability allows attackers to exploit a CGI script to execute commands or access sensitive files on the server.",
+
+    14: "Ping of Death Attack (Denial of Service - DoS): Ping of Death attack detected. Configure firewalls to filter oversized ICMP packets, update the network stack to prevent vulnerability exploitation, and monitor ICMP traffic patterns. \n\nExplanation: This attack sends oversized ICMP packets to crash or freeze the target system by exploiting vulnerabilities in the network stack.",
+
+    15: "Port Sweep Attack (Probing/Scanning): Port sweep detected. Deploy honeypots to detect scanning attempts, implement firewall rules to block scanning IPs, and conduct network traffic analysis for early detection. \n\nExplanation: A port sweep scans multiple ports on a single host to identify open services and potential vulnerabilities.",
+
+    16: "Rootkit Attack (User-to-Root - U2R): Rootkit activity detected. Use file integrity monitoring tools, deploy endpoint detection and response (EDR) solutions, and periodically scan systems for rootkit infections. \n\nExplanation: Rootkits are malicious tools that provide attackers with persistent, stealthy access to a compromised system.",
+
+    17: "Satan Vulnerability Scan (Probing/Scanning): Satan vulnerability scan detected. Regularly patch vulnerabilities, disable unnecessary services, and conduct internal penetration testing to assess security weaknesses. \n\nExplanation: Satan is a network scanning tool used to identify vulnerabilities in systems and services.",
+
+    18: "Smurf Attack (Denial of Service - DoS): Smurf attack detected. Disable ICMP broadcast responses, configure anti-spoofing rules in firewalls, and implement network ingress/egress filtering. \n\nExplanation: A smurf attack floods the target with ICMP echo requests using IP spoofing, overwhelming the network with traffic.",
+
+    19: "Spyware Attack (Data Theft/Espionage): Spyware detected. Deploy endpoint security solutions, restrict software installation rights for users, and educate employees on phishing threats and suspicious downloads. \n\nExplanation: Spyware is malicious software that secretly monitors user activity and collects sensitive data.",
+
+    20: "Teardrop Attack (Denial of Service - DoS): Teardrop attack detected. Patch operating systems and networking devices to prevent fragmented packet vulnerabilities, and configure firewalls to block malformed packet sequences. \n\nExplanation: A teardrop attack sends malformed fragmented packets to crash the target system by exploiting vulnerabilities in packet reassembly.",
+
+    21: "Warez Client Activity (Remote-to-Local - R2L): Unauthorized warez client activity detected. Monitor file transfer logs, restrict anonymous FTP access, and enforce network usage policies to prevent illegal file sharing. \n\nExplanation: Warez clients are used to download or distribute pirated software, often leading to legal and security risks.",
+
+    22: "Warezmaster Intrusion (Remote-to-Local - R2L): Warezmaster intrusion detected. Strengthen authentication mechanisms for FTP services, implement strict access control policies, and regularly audit file-sharing services for unauthorized activities. \n\nExplanation: Warezmaster attacks involve unauthorized access to FTP servers to distribute pirated software or malware."
+}
         attack_label = prediction
         print("Decoded top Attack Label:", attack_label)
         precaution_message = precaution.get(attack_label, "No specific precaution available.")
@@ -311,7 +382,9 @@ def predict():
                               waterfall_explanation=waterfall_text,
                               bar_explanation=bar_text,
                               pca_interpretation=pc_text,
-                              global_explanation=global_explanation)
+                              global_explanation=global_explanation,
+                              lime_html=exp_html,
+                               lime_text=lime_explanation_text)
            
     except Exception as e:
         return f"Error: {str(e)}"
