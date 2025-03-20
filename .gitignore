@@ -1,0 +1,9 @@
+# Ignore checkpoint folder
+.ipynb_checkpoints/
+
+# Ignore all .pkl and .txt files
+*.pkl
+*.txt
+
+# Ignore appx.py
+appx.py
