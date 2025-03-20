@@ -10,6 +10,12 @@ import lime
 import lime.lime_tabular
 import os
 from PIL import Image
+import requests
+import subprocess
+import time
+import json
+
+
 
 # Load trained model and components
 model_data = joblib.load("intrusion_detection.pkl")
@@ -29,6 +35,21 @@ app.secret_key = 'your_secret_key'
 
 # Login credentials
 users = {"admin": "jayavardhan"}
+
+
+# Start Ollama Server
+def start_ollama():
+    try:
+        response = requests.get("http://localhost:11434/api/tags", timeout=2)
+        if response.status_code == 200:
+            print("Ollama is already running.")
+            return None
+    except requests.exceptions.RequestException:
+        print("Starting Ollama server...")
+        return subprocess.Popen(["ollama", "serve"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+ollama_process = start_ollama()
+time.sleep(5)  # Wait for Ollama to start
 
 @app.route('/static0/<path:filename>')
 def static0(filename):
@@ -56,7 +77,17 @@ def predict():
         return redirect(url_for('login'))
 
     if request.method == 'GET':
-        return render_template('predict.html')
+        return render_template('predict.html',xpected_features=[
+                                'duration', 'protocol_type', 'service', 'flag', 'src_bytes', 'dst_bytes', 
+                                'land', 'wrong_fragment', 'urgent', 'hot', 'num_failed_logins', 'logged_in',
+                                'num_compromised', 'root_shell', 'su_attempted', 'num_root', 'num_file_creations', 
+                                'num_shells', 'num_access_files', 'num_outbound_cmds', 'is_host_login', 'is_guest_login', 
+                                'count', 'srv_count', 'serror_rate', 'srv_serror_rate', 'rerror_rate', 'srv_rerror_rate', 
+                                'same_srv_rate', 'diff_srv_rate', 'srv_diff_host_rate', 'dst_host_count', 
+                                'dst_host_srv_count', 'dst_host_same_srv_rate', 'dst_host_diff_srv_rate', 
+                                'dst_host_same_src_port_rate', 'dst_host_srv_diff_host_rate', 'dst_host_serror_rate', 
+                                'dst_host_srv_serror_rate', 'dst_host_rerror_rate', 'dst_host_srv_rerror_rate'
+                             ])
     
     try:
         # Check if a file is uploaded
@@ -371,7 +402,76 @@ def predict():
         
         
         print(f"Decoded Attack Label: {attack_label}")  # Should now show actual attack name like "neptune" or "normal"
-       
+        questions = "\n".join([
+            f"1. Tell what {attack_label} attack is in 1 line.",
+            f"2. Explain {attack_label} attack in 4-5 lines.",
+            f"3. Summarize the impact of {attack_label} attack in 4-5 lines.",
+            f"4. How does {attack_label} attack work? Answer in 4-5 lines.",
+            f"5. Provide a short overview of {attack_label} attack in 4-5 lines."
+        ])
+        
+        predefined_question = f"""Answer each numbered question directly following this format:
+        [number]: [answer]
+        Do not explain your answers. Be concise.
+        {questions}"""
+        
+        try:
+            response = requests.post(
+                "http://localhost:11434/api/generate",
+                json={
+                    "model": "deepseek-r1:7b",
+                    "prompt": predefined_question,
+                    "max_tokens": 400  # Increased for multiple answers
+                },
+                stream=True
+            )
+        
+            generated_text = ""
+            for line in response.iter_lines():
+                if line:
+                    try:
+                        json_line = line.decode("utf-8")
+                        data = json.loads(json_line)
+                        if "response" in data:
+                            generated_text += data["response"]
+                    except json.JSONDecodeError as e:
+                        print("JSON Decode Error:", e)
+        
+        except Exception as e:
+            generated_text = f"Error: {str(e)}"
+        '''
+        questions = "\n".join([
+            f"Tell what {attack_label} attack is in only 1 line",
+            f"Tell what {attack_label} attack is in 4 to 5 lines.",
+            f"Explain {attack_label} attack in in 4 to 5 lines.",
+            f"Summarize the impact of a {attack_label} attack in 4 to 5 lines..",
+            f"How does a {attack_label} attack work? in 4 to 5 lines.",
+            f"Provide a short overview of {attack_label} attack in 4 to 5 lines."
+        ])
+        predefined_question = f"Answer these questions concisely:\n{questions}"
+        
+        try:
+            response = requests.post(
+                "http://localhost:11434/api/generate",
+                json={"model": "deepseek-r1:7b", "prompt": predefined_question},  # Increased tokens
+                stream=True
+            )
+        
+            generated_text = ""
+            for line in response.iter_lines():
+                if line:
+                    try:
+                        json_line = line.decode("utf-8")
+                        data = json.loads(json_line)
+                        if "response" in data:
+                            generated_text += data["response"]
+                    except json.JSONDecodeError as e:
+                        print("JSON Decode Error:", e)
+        
+        except Exception as e:
+            generated_text = f"Error: {str(e)}"
+        '''
+            
         return render_template('result.html', 
                                attack_type=attack_label,  # Displays actual attack name!
                                confidence=round(prediction_proba, 2), 
@@ -384,7 +484,7 @@ def predict():
                               pca_interpretation=pc_text,
                               global_explanation=global_explanation,
                               lime_html=exp_html,
-                               lime_text=lime_explanation_text)
+                               lime_text=lime_explanation_text,res=generated_text)
            
     except Exception as e:
         return f"Error: {str(e)}"
@@ -396,3 +496,8 @@ def logout():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    '''try:
+        app.run(debug=True)
+    finally:
+        if ollama_process:
+            ollama_process.terminate()  # Ensure Ollama stops when Flask stops'''
