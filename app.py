@@ -36,7 +36,7 @@ app.secret_key = 'your_secret_key'
 # Login credentials
 users = {"admin": "jayavardhan"}
 
-
+'''
 # Start Ollama Server
 def start_ollama():
     try:
@@ -50,7 +50,7 @@ def start_ollama():
 
 ollama_process = start_ollama()
 time.sleep(5)  # Wait for Ollama to start
-
+'''
 @app.route('/static0/<path:filename>')
 def static0(filename):
     return send_from_directory('static0', filename)
@@ -88,25 +88,9 @@ def predict():
                                 'dst_host_same_src_port_rate', 'dst_host_srv_diff_host_rate', 'dst_host_serror_rate', 
                                 'dst_host_srv_serror_rate', 'dst_host_rerror_rate', 'dst_host_srv_rerror_rate'
                              ])
-    
-    try:
-        # Check if a file is uploaded
-        if 'file' not in request.files:
-            return "No file uploaded"
-        
-        file = request.files['file']
-        if file.filename == '':
-            return "No file selected"
-        
-        # Read the CSV file
-        df = pd.read_csv(file)
-        
-        # Ensure the file has only one row
-        if df.shape[0] != 1:
-            return "File must contain exactly one row of data"
-        
-        # Expected features
-        expected_features = [
+     
+    # Expected features
+    expected_features = [
             'duration', 'protocol_type', 'service', 'flag', 'src_bytes', 'dst_bytes', 
             'land', 'wrong_fragment', 'urgent', 'hot', 'num_failed_logins', 'logged_in',
             'num_compromised', 'root_shell', 'su_attempted', 'num_root', 'num_file_creations', 
@@ -116,7 +100,36 @@ def predict():
             'dst_host_srv_count', 'dst_host_same_srv_rate', 'dst_host_diff_srv_rate', 
             'dst_host_same_src_port_rate', 'dst_host_srv_diff_host_rate', 'dst_host_serror_rate', 
             'dst_host_srv_serror_rate', 'dst_host_rerror_rate', 'dst_host_srv_rerror_rate'
-        ]
+    ]
+    try:
+        df = None
+        
+        # Handle file upload
+        if 'file' in request.files and request.files['file'].filename != '':
+            file = request.files['file']
+            if file.filename == '':
+                return "No file selected"
+            
+            df = pd.read_csv(file)
+            
+            if df.shape[0] != 1:
+                return "File must contain exactly one row of data"
+            
+            if not all(feature in df.columns for feature in expected_features):
+                return "CSV file is missing some required features"
+
+        # Handle form input
+        else:
+            form_data = {}
+            for feature in expected_features:
+                value = request.form.get(feature)
+                if not value:
+                    return f"Missing value for {feature}"
+                form_data[feature] = [value]
+            
+            df = pd.DataFrame(form_data)
+
+        
         
         # Check if all expected features are present in the CSV
         if not all(feature in df.columns for feature in expected_features):
@@ -399,7 +412,7 @@ def predict():
             attack_label = label_encoders['labels'].inverse_transform([prediction])[0]
         else:
             attack_label = attack_labels.get(prediction, "Unknown Attack Type")  # Fallback if no encoder
-        
+        '''
         
         print(f"Decoded Attack Label: {attack_label}")  # Should now show actual attack name like "neptune" or "normal"
         questions = "\n".join([
@@ -439,6 +452,7 @@ def predict():
         
         except Exception as e:
             generated_text = f"Error: {str(e)}"
+        '''
         '''
         questions = "\n".join([
             f"Tell what {attack_label} attack is in only 1 line",
@@ -484,7 +498,7 @@ def predict():
                               pca_interpretation=pc_text,
                               global_explanation=global_explanation,
                               lime_html=exp_html,
-                               lime_text=lime_explanation_text,res=generated_text)
+                               lime_text=lime_explanation_text)
            
     except Exception as e:
         return f"Error: {str(e)}"

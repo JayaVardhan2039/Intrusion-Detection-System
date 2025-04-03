@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Intrusion Detection - Predict</title>
-    <link rel="stylesheet" href="/static/style.css"> <!-- Optional CSS file -->
+    <link rel="stylesheet" href="/static/style.css"> 
 </head>
 <body>
     <h1>Model Performance Metics and Distribution</h1>
@@ -26,6 +26,373 @@
         <input type="file" name="file" accept=".csv" required><br><br>
         <input type="submit" value="Predict">
     </form>
+
+    <h3>OR</h3>
+
+    <form action="/predict" method="POST">
+        {% for feature in [
+            'duration', 'protocol_type', 'service', 'flag', 'src_bytes', 'dst_bytes', 
+            'land', 'wrong_fragment', 'urgent', 'hot', 'num_failed_logins', 'logged_in',
+            'num_compromised', 'root_shell', 'su_attempted', 'num_root', 'num_file_creations', 
+            'num_shells', 'num_access_files', 'num_outbound_cmds', 'is_host_login', 'is_guest_login', 
+            'count', 'srv_count', 'serror_rate', 'srv_serror_rate', 'rerror_rate', 'srv_rerror_rate', 
+            'same_srv_rate', 'diff_srv_rate', 'srv_diff_host_rate', 'dst_host_count', 
+            'dst_host_srv_count', 'dst_host_same_srv_rate', 'dst_host_diff_srv_rate', 
+            'dst_host_same_src_port_rate', 'dst_host_srv_diff_host_rate', 'dst_host_serror_rate', 
+            'dst_host_srv_serror_rate', 'dst_host_rerror_rate', 'dst_host_srv_rerror_rate' ] %}
+            <label for="{{ feature }}">{{ feature.replace('_', ' ').title() }}:</label>
+            <input type="text" name="{{ feature }}"><br>
+        {% endfor %}
+        <input type="submit" value="Predict">
+    </form>
+
+    <br>
+    <a href="/logout">Logout</a>
+</body>
+</html>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intrusion Detection - Predict</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .input-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .input-row select {
+            width: 200px;
+            margin-right: 10px;
+        }
+        .input-row input {
+            flex-grow: 1;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        h2, h3 {
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        function autofillFromDropdown(featureName, selectElement) {
+            const inputElement = document.getElementById(featureName + '_input');
+            inputElement.value = selectElement.value;
+        }
+    </script>
+</head>
+<body>
+    <h1>Model Performance Metrics and Distribution</h1>
+    <!-- Your existing image displays here -->
+    
+    <h2>Intrusion Detection Prediction</h2>
+    <form action="/predict" method="POST" enctype="multipart/form-data">
+        <label for="file">Upload CSV File (One Row):</label>
+        <input type="file" name="file" accept=".csv"><br><br>
+        <input type="submit" value="Predict">
+    </form>
+
+    <h3>OR Enter Values Manually</h3>
+
+    <form action="/predict" method="POST">
+        <div class="input-container">
+            <!-- Basic Features -->
+            <div class="input-group">
+                <label>Basic Features</label>
+                <div class="input-row">
+                    <select name="protocol_type_dropdown" onchange="autofillFromDropdown('protocol_type', this)">
+                        <option value="">-- Protocol Type --</option>
+                        <option value="tcp">TCP</option>
+                        <option value="udp">UDP</option>
+                        <option value="icmp">ICMP</option>
+                    </select>
+                    <input type="text" name="protocol_type" id="protocol_type_input" required>
+                </div>
+
+                <div class="input-row">
+                    <select name="service_dropdown" onchange="autofillFromDropdown('service', this)">
+                        <option value="">-- Service --</option>
+                        <option value="http">HTTP</option>
+                        <option value="ftp">FTP</option>
+                        <option value="smtp">SMTP</option>
+                        <option value="ssh">SSH</option>
+                        <option value="telnet">Telnet</option>
+                        <option value="domain">DNS</option>
+                        <option value="private">Private</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <input type="text" name="service" id="service_input" required>
+                </div>
+
+                <div class="input-row">
+                    <select name="flag_dropdown" onchange="autofillFromDropdown('flag', this)">
+                        <option value="">-- Flag --</option>
+                        <option value="SF">SF</option>
+                        <option value="S0">S0</option>
+                        <option value="REJ">REJ</option>
+                        <option value="RSTR">RSTR</option>
+                        <option value="RSTO">RSTO</option>
+                        <option value="SH">SH</option>
+                    </select>
+                    <input type="text" name="flag" id="flag_input" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="duration">Duration (s):</label>
+                    <input type="number" name="duration" step="0.001" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="src_bytes">Source Bytes:</label>
+                    <input type="number" name="src_bytes" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="dst_bytes">Destination Bytes:</label>
+                    <input type="number" name="dst_bytes" min="0" required>
+                </div>
+            </div>
+
+            <!-- Binary Features -->
+            <div class="input-group">
+                <label>Binary Features</label>
+                <div class="input-row">
+                    <select name="land_dropdown" onchange="autofillFromDropdown('land', this)">
+                        <option value="">-- Land --</option>
+                        <option value="0">0 (No)</option>
+                        <option value="1">1 (Yes)</option>
+                    </select>
+                    <input type="number" name="land" id="land_input" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <select name="logged_in_dropdown" onchange="autofillFromDropdown('logged_in', this)">
+                        <option value="">-- Logged In --</option>
+                        <option value="0">0 (No)</option>
+                        <option value="1">1 (Yes)</option>
+                    </select>
+                    <input type="number" name="logged_in" id="logged_in_input" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <select name="root_shell_dropdown" onchange="autofillFromDropdown('root_shell', this)">
+                        <option value="">-- Root Shell --</option>
+                        <option value="0">0 (No)</option>
+                        <option value="1">1 (Yes)</option>
+                    </select>
+                    <input type="number" name="root_shell" id="root_shell_input" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <select name="su_attempted_dropdown" onchange="autofillFromDropdown('su_attempted', this)">
+                        <option value="">-- SU Attempted --</option>
+                        <option value="0">0 (No)</option>
+                        <option value="1">1 (Yes)</option>
+                    </select>
+                    <input type="number" name="su_attempted" id="su_attempted_input" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <select name="is_host_login_dropdown" onchange="autofillFromDropdown('is_host_login', this)">
+                        <option value="">-- Is Host Login --</option>
+                        <option value="0">0 (No)</option>
+                        <option value="1">1 (Yes)</option>
+                    </select>
+                    <input type="number" name="is_host_login" id="is_host_login_input" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <select name="is_guest_login_dropdown" onchange="autofillFromDropdown('is_guest_login', this)">
+                        <option value="">-- Is Guest Login --</option>
+                        <option value="0">0 (No)</option>
+                        <option value="1">1 (Yes)</option>
+                    </select>
+                    <input type="number" name="is_guest_login" id="is_guest_login_input" min="0" max="1" required>
+                </div>
+            </div>
+
+            <!-- Count Features -->
+            <div class="input-group">
+                <label>Count Features</label>
+                <div class="input-row">
+                    <label for="wrong_fragment">Wrong Fragment:</label>
+                    <input type="number" name="wrong_fragment" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="urgent">Urgent:</label>
+                    <input type="number" name="urgent" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="hot">Hot:</label>
+                    <input type="number" name="hot" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="num_failed_logins">Failed Logins:</label>
+                    <input type="number" name="num_failed_logins" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="num_compromised">Compromised:</label>
+                    <input type="number" name="num_compromised" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="num_root">Root Accesses:</label>
+                    <input type="number" name="num_root" min="0" required>
+                </div>
+            </div>
+
+            <!-- File and Shell Features -->
+            <div class="input-group">
+                <label>File/Shell Features</label>
+                <div class="input-row">
+                    <label for="num_file_creations">File Creations:</label>
+                    <input type="number" name="num_file_creations" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="num_shells">Shells:</label>
+                    <input type="number" name="num_shells" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="num_access_files">Access Files:</label>
+                    <input type="number" name="num_access_files" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="num_outbound_cmds">Outbound Cmds:</label>
+                    <input type="number" name="num_outbound_cmds" min="0" required>
+                </div>
+            </div>
+
+            <!-- Rate Features -->
+            <div class="input-group">
+                <label>Rate Features (0-1)</label>
+                <div class="input-row">
+                    <label for="serror_rate">Serror Rate:</label>
+                    <input type="number" name="serror_rate" step="0.0001" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="srv_serror_rate">Srv Serror Rate:</label>
+                    <input type="number" name="srv_serror_rate" step="0.0001" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="rerror_rate">Rerror Rate:</label>
+                    <input type="number" name="rerror_rate" step="0.0001" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="srv_rerror_rate">Srv Rerror Rate:</label>
+                    <input type="number" name="srv_rerror_rate" step="0.0001" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="same_srv_rate">Same Srv Rate:</label>
+                    <input type="number" name="same_srv_rate" step="0.0001" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="diff_srv_rate">Diff Srv Rate:</label>
+                    <input type="number" name="diff_srv_rate" step="0.0001" min="0" max="1" required>
+                </div>
+                <div class="input-row">
+                    <label for="srv_diff_host_rate">Srv Diff Host Rate:</label>
+                    <input type="number" name="srv_diff_host_rate" step="0.0001" min="0" max="1" required>
+                </div>
+            </div>
+
+            <!-- Host-based Features -->
+            <div class="input-group">
+                <label>Host-based Features</label>
+                <div class="input-row">
+                    <label for="count">Count:</label>
+                    <input type="number" name="count" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="srv_count">Srv Count:</label>
+                    <input type="number" name="srv_count" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="dst_host_count">Dst Host Count:</label>
+                    <input type="number" name="dst_host_count" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="dst_host_srv_count">Dst Host Srv Count:</label>
+                    <input type="number" name="dst_host_srv_count" min="0" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="dst_host_same_srv_rate">Dst Host Same Srv Rate:</label>
+                    <input type="number" name="dst_host_same_srv_rate" step="0.0001" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="dst_host_diff_srv_rate">Dst Host Diff Srv Rate:</label>
+                    <input type="number" name="dst_host_diff_srv_rate" step="0.0001" min="0" max="1" required>
+                </div>
+            </div>
+
+            <!-- Additional Host Features -->
+            <div class="input-group">
+                <label>Additional Host Features</label>
+                <div class="input-row">
+                    <label for="dst_host_same_src_port_rate">Dst Host Same Src Port Rate:</label>
+                    <input type="number" name="dst_host_same_src_port_rate" step="0.0001" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="dst_host_srv_diff_host_rate">Dst Host Srv Diff Host Rate:</label>
+                    <input type="number" name="dst_host_srv_diff_host_rate" step="0.0001" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="dst_host_serror_rate">Dst Host Serror Rate:</label>
+                    <input type="number" name="dst_host_serror_rate" step="0.0001" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="dst_host_srv_serror_rate">Dst Host Srv Serror Rate:</label>
+                    <input type="number" name="dst_host_srv_serror_rate" step="0.0001" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="dst_host_rerror_rate">Dst Host Rerror Rate:</label>
+                    <input type="number" name="dst_host_rerror_rate" step="0.0001" min="0" max="1" required>
+                </div>
+
+                <div class="input-row">
+                    <label for="dst_host_srv_rerror_rate">Dst Host Srv Rerror Rate:</label>
+                    <input type="number" name="dst_host_srv_rerror_rate" step="0.0001" min="0" max="1" required>
+                </div>
+            </div>
+        </div>
+
+        <input type="submit" value="Predict">
+    </form>
+
     <br>
     <a href="/logout">Logout</a>
 </body>
