@@ -36,7 +36,6 @@ app.secret_key = 'your_secret_key'
 # Login credentials
 users = {"admin": "jayavardhan"}
 
-'''
 # Start Ollama Server
 def start_ollama():
     try:
@@ -50,7 +49,7 @@ def start_ollama():
 
 ollama_process = start_ollama()
 time.sleep(5)  # Wait for Ollama to start
-'''
+
 @app.route('/static0/<path:filename>')
 def static0(filename):
     return send_from_directory('static0', filename)
@@ -509,9 +508,8 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    '''try:
+    try:
         app.run(debug=True)
     finally:
         if ollama_process:
-            ollama_process.terminate()  # Ensure Ollama stops when Flask stops'''
+            ollama_process.terminate()  # Ensure Ollama stops when Flask stops

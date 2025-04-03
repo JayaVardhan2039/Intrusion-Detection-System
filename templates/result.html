@@ -5,8 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prediction Result</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        /* Chatbot button and container styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .chatbot-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .chatbot-button:hover {
+            background-color: #0b5ed7;
+            transform: scale(1.1);
+        }
+        
+        .chatbot-popup {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chatbot-popup.show {
+            display: flex;
+        }
+        
+        /* Style for think tags */
+        think {
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .chatbot-popup {
+                width: 300px;
+                right: -50px;
+            }
+        }
+    </style>
 </head>
-<body class="container mt-5 text-center" >
+<body class="container mt-5 text-center">
     <h2>Intrusion Detection Result</h2>
     
     <div class="alert alert-info">
@@ -44,11 +105,228 @@
         <h5>Textual Explanation:</h5>
         <pre>{{ lime_text }}</pre>
     </div>
-</div>
     
     <div class="mt-4">
         <a href="/predict" class="btn btn-primary">Try Again</a>
         <a href="/logout" class="btn btn-danger">Logout</a>
     </div>
+
+    <!-- Chatbot Section - Now as a floating button -->
+    <div class="chatbot-container">
+        <button class="chatbot-button" id="chatbotToggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+            </svg>
+        </button>
+        
+        <div class="chatbot-popup" id="chatbotPopup">
+            <div class="bg-primary text-white p-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Chat with Ollama</h5>
+                <div>
+                    <button class="btn btn-sm btn-light me-2" id="clearChat">Clear</button>
+                    <button class="btn btn-sm btn-light" id="minimizeChat">_</button>
+                </div>
+            </div>
+            <div id="chatbox" class="border p-3 flex-grow-1" style="height: 300px; overflow-y: auto; background-color: #f8f9fa;">
+                <!-- Chat messages will appear here -->
+            </div>
+            <div class="input-group p-2">
+                <input type="text" id="userInput" class="form-control" placeholder="Type your message here...">
+                <button id="sendButton" class="btn btn-primary">Send</button>
+                <button id="stopButton" class="btn btn-danger" style="display: none;">Stop</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chatbot UI elements
+        const chatbotToggle = document.getElementById('chatbotToggle');
+        const chatbotPopup = document.getElementById('chatbotPopup');
+        const minimizeChat = document.getElementById('minimizeChat');
+        const chatbox = document.getElementById('chatbox');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const stopButton = document.getElementById('stopButton');
+        const clearChatButton = document.getElementById('clearChat');
+        
+        let stopGeneration = false;
+        let isUserScrolling = false;
+        let isChatOpen = false;
+
+        // Toggle chat popup
+        chatbotToggle.addEventListener('click', () => {
+            isChatOpen = !isChatOpen;
+            if (isChatOpen) {
+                chatbotPopup.classList.add('show');
+            } else {
+                chatbotPopup.classList.remove('show');
+            }
+        });
+
+        // Minimize chat
+        minimizeChat.addEventListener('click', (e) => {
+            e.stopPropagation();
+            chatbotPopup.classList.remove('show');
+            isChatOpen = false;
+        });
+
+        // Event listener for the clear button
+        clearChatButton.addEventListener('click', () => {
+            chatbox.innerHTML = ''; // Clear all messages in the chatbox
+        });
+
+        // Function to append messages to the chatbox
+        function appendMessage(sender, message, isFormatted = false, align = 'left') {
+            // Process think tags first
+            message = message.replace(/<think>(.*?)<\/think>/g, '<think>$1</think>');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('mb-2', 'd-flex', align === 'right' ? 'justify-content-end' : 'justify-content-start');
+            
+            messageDiv.innerHTML = `<div class="p-2 rounded" style="max-width: 70%; background-color: ${align === 'right' ? '#d1e7dd' : '#f8d7da'};">
+                <strong>${sender}:</strong> ${isFormatted ? message : formatResponse(message)}
+            </div>`;
+            
+            chatbox.appendChild(messageDiv);
+            if (!isUserScrolling) {
+                chatbox.scrollTop = chatbox.scrollHeight; // Auto-scroll to the bottom
+            }
+        }
+
+        // Function to format Markdown to HTML
+        function formatResponse(response) {
+            // Headers
+            response = response.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+            response = response.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+            response = response.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+            
+            // Text styling
+            response = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            response = response.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // Code blocks
+            response = response.replace(/`(.*?)`/g, '<code>$1</code>');
+            response = response.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+            
+            // Lists and quotes
+            response = response.replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>');
+            response = response.replace(/^\* (.*$)/gm, '<ul><li>$1</li></ul>');
+            response = response.replace(/^\d\. (.*$)/gm, '<ol><li>$1</li></ol>');
+            
+            // Links and images
+            response = response.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+            response = response.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1">');
+            
+            // Line breaks
+            response = response.replace(/\n/g, '<br>');
+            
+            return response;
+        }
+
+        // Event listener for the send button
+        sendButton.addEventListener('click', async () => {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // Append user message to chatbox
+            appendMessage('You', message, false, 'right');
+            userInput.value = '';
+
+            stopButton.style.display = 'inline-block'; // Show the stop button
+            sendButton.disabled = true;
+            stopGeneration = false;
+
+            try {
+                // Use Fetch API to send the request and handle streaming response
+                const response = await fetch('http://localhost:11434/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'deepseek-r1:7b',
+                        prompt: message,
+                        max_tokens: 200
+                    })
+                });
+
+                if (!response.body) {
+                    throw new Error('ReadableStream not supported in this browser.');
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                let ollamaResponse = '';
+
+                // Create a new message div for Ollama's response
+                const ollamaMessageDiv = document.createElement('div');
+                ollamaMessageDiv.classList.add('mb-2', 'd-flex', 'justify-content-start');
+                const ollamaContentDiv = document.createElement('div');
+                ollamaContentDiv.classList.add('p-2', 'rounded');
+                ollamaContentDiv.style.maxWidth = '70%';
+                ollamaContentDiv.style.backgroundColor = '#f8d7da';
+                ollamaContentDiv.innerHTML = '<strong>Ollama:</strong> <span class="ollama-response"></span>';
+                ollamaMessageDiv.appendChild(ollamaContentDiv);
+                chatbox.appendChild(ollamaMessageDiv);
+                const responseSpan = ollamaContentDiv.querySelector('.ollama-response');
+
+                while (true) {
+                    if (stopGeneration) {
+                        console.log('Response generation stopped by user.');
+                        appendMessage('System', 'Response generation stopped', false, 'left');
+                        break;
+                    }
+
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n');
+
+                    for (const line of lines) {
+                        if (line.trim()) {
+                            try {
+                                const data = JSON.parse(line);
+                                if (data.response) {
+                                    ollamaResponse += data.response;
+                                    responseSpan.innerHTML = formatResponse(ollamaResponse);
+                                    if (!isUserScrolling) {
+                                        chatbox.scrollTop = chatbox.scrollHeight;
+                                    }
+                                }
+                            } catch (error) {
+                                console.error('Error parsing response line:', error);
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error communicating with Ollama API:', error);
+                appendMessage('Ollama', 'Sorry, there was an error processing your request.', false, 'left');
+            } finally {
+                stopButton.style.display = 'none'; // Hide the stop button
+                sendButton.disabled = false;
+            }
+        });
+
+        // Event listener for the stop button
+        stopButton.addEventListener('click', () => {
+            stopGeneration = true;
+            stopButton.style.display = 'none';
+            sendButton.disabled = false;
+        });
+
+        // Allow pressing Enter to send a message
+        userInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+
+        // Detect manual scrolling
+        chatbox.addEventListener('scroll', () => {
+            const atBottom = chatbox.scrollHeight - chatbox.scrollTop === chatbox.clientHeight;
+            isUserScrolling = !atBottom;
+        });
+    </script>
 </body>
 </html>
