@@ -14,8 +14,7 @@ import requests
 import subprocess
 import time
 import json
-
-
+from helpers import get_confidence_based_data
 
 # Load trained model and components
 model_data = joblib.load("intrusion_detection.pkl")
@@ -225,6 +224,7 @@ def predict():
         
         # Precaution messages
         precaution = {
+    0: "Back Attack (Denial of Service - DoS): Back attack detected. Configure firewalls to block malicious HTTP requests, use rate limiting to prevent abuse, and monitor server logs for unusual patterns. \n\nExplanation: A back attack involves sending a large number of HTTP requests to a web server, overwhelming it and causing denial of service.",
     11: "No intrusion detected. Continue monitoring network activity for potential threats.",
 
     1: "Buffer Overflow Attack (User-to-Root - U2R): Buffer overflow detected. Implement stack canaries, address space layout randomization (ASLR), and non-executable memory protection. Regularly update and patch vulnerable software. \n\nExplanation: A buffer overflow attack occurs when an attacker sends more data to a program than it can handle, causing it to overwrite adjacent memory. This can lead to arbitrary code execution, crashes, or privilege escalation.",
@@ -318,7 +318,7 @@ def predict():
         # 2. Summary bar plot explanation
         top_pcs = np.argsort(np.abs(shap_values_single).mean(0))[::-1][:3]  # Top 3 components
         bar_text = (
-            f"The most significant principal components influencing this prediction were: "
+            f"The most significant principal components influencing this prediction were:"
             f"{', '.join([f'PC{i+1} ({shap_values_single[0,i]:.2f})' for i in top_pcs])}. "
             "Longer bars indicate greater impact on the model's decision."
         )
@@ -392,12 +392,18 @@ def predict():
             top_global_indices = np.argsort(global_mean_shap)[::-1][:3]
             top_global_pcs = [f"PC{i+1}" for i in top_global_indices]
             
-            # Create explanation text
-            global_explanation = (
-                f"The model's decisions are primarily driven by these principal components: "
-                f"{', '.join(top_global_pcs)}. These components capture the most significant "
-                "network traffic patterns for intrusion detection across all predictions."
-            )
+            # First format the components with line breaks
+            components_list = '\n'.join([f'- {pc}' for pc in top_global_pcs])
+
+            # Then use in the f-string
+            global_explanation = f"""
+            The model's decision-making process is primarily influenced by these key principal components:
+            {components_list}
+
+            These components represent the most impactful network traffic patterns identified through PCA analysis, 
+            capturing the essential characteristics that differentiate normal behavior from various attack types 
+            across all predictions in the intrusion detection system.
+            """
         except Exception as e:
             print(f"Global explanation error: {str(e)}")
             global_explanation = "Overall model decisions are influenced by combinations of network traffic characteristics."
@@ -484,7 +490,10 @@ def predict():
         except Exception as e:
             generated_text = f"Error: {str(e)}"
         '''
-            
+        # In your prediction route
+        confidence_value = round(prediction_proba, 2)
+        attack_data = get_confidence_based_data(attack_label, confidence_value)
+
         return render_template('result.html', 
                                attack_type=attack_label,  # Displays actual attack name!
                                confidence=round(prediction_proba, 2), 
@@ -497,7 +506,11 @@ def predict():
                               pca_interpretation=pc_text,
                               global_explanation=global_explanation,
                               lime_html=exp_html,
-                               lime_text=lime_explanation_text)
+                              lime_text=lime_explanation_text,
+                              causes=attack_data['causes'],
+                              steps=attack_data['steps'],
+                              explanations=attack_data['explanations'],
+                              precautions=attack_data['precautions'],)
            
     except Exception as e:
         return f"Error: {str(e)}"

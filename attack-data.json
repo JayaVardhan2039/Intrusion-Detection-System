@@ -1,0 +1,1110 @@
+{
+    "back": [
+        {
+            "min_confidence": 1,
+            "max_confidence": 33,
+            "causes": [
+              {
+                "short": "Basic Network Issues",
+                "details": [
+                  "Router needs restarting",
+                  "Loose internet cables",
+                  "Weak Wi-Fi signal",
+                  "Old router software",
+                  "Too many connected devices",
+                  "Neighbor using your Wi-Fi",
+                  "Internet goes on and off",
+                  "Wi-Fi not reaching some rooms",
+                  "Dusty or damaged router",
+                  "Wires plugged in the wrong place",
+                  "Wi-Fi button turned off by mistake"
+                ]
+              },
+              {
+                "short": "Device Problems",
+                "details": [
+                  "Phone or computer is slow",
+                  "Apps keep crashing",
+                  "Battery finishes too fast",
+                  "Strange apps on device",
+                  "Too many pop-up ads",
+                  "Storage is almost full",
+                  "Device gets too hot",
+                  "Browser opens by itself",
+                  "Too many apps open",
+                  "Screen freezes a lot",
+                  "Slow after an update"
+                ]
+              },
+              {
+                "short": "Internet Provider Issues",
+                "details": [
+                  "ISP doing maintenance",
+                  "Area has internet outage",
+                  "Data limit reached",
+                  "ISP slows speed on purpose",
+                  "Too many people online at once",
+                  "Old internet plan"
+                ]
+              },
+              {
+                "short": "Security Problems",
+                "details": [
+                  "Someone else using your Wi-Fi",
+                  "Settings changed without knowing",
+                  "Router lights blinking strangely",
+                  "New user added to router",
+                  "Strange websites open on their own",
+                  "DNS settings changed"
+                ]
+              },
+              {
+                "short": "App or Software Problems",
+                "details": [
+                  "Browser has too many add-ons",
+                  "Antivirus blocking internet",
+                  "Outdated app version",
+                  "VPN causing slow speed",
+                  "Firewall not set properly",
+                  "Old drivers not updated"
+                ]
+              }
+            ],
+            "steps": [
+              {
+                "short": "Quick Fixes",
+                "details": [
+                  "Unplug the router for a minute",
+                  "Check if all wires are tight",
+                  "Restart your phone or computer",
+                  "Delete apps you don't know",
+                  "Clear browsing history",
+                  "Update your device"
+                ]
+              },
+              {
+                "short": "Wi-Fi Security",
+                "details": [
+                  "Change your Wi-Fi password",
+                  "Make a guest network",
+                  "Hide the network name",
+                  "Turn off WPS button",
+                  "Allow only 10 devices",
+                  "Check who is connected"
+                ]
+              },
+              {
+                "short": "Improve Device",
+                "details": [
+                  "Remove apps not used",
+                  "Clear app cache",
+                  "Free up phone or PC space",
+                  "Turn off background apps",
+                  "Close apps you're not using",
+                  "Update all apps"
+                ]
+              },
+              {
+                "short": "Better Router Use",
+                "details": [
+                  "Move router to center of house",
+                  "Keep router cool and clean",
+                  "Use signal boosters if needed",
+                  "Turn off router at night",
+                  "Update router software",
+                  "Use a dual-band router"
+                ]
+              },
+              {
+                "short": "Check Internet Source",
+                "details": [
+                  "Call your internet provider",
+                  "Test speed on speedtest.net",
+                  "Check for outages in your area",
+                  "See if you're over data limit",
+                  "Try using mobile data instead",
+                  "Change your internet plan"
+                ]
+              }
+            ],
+            "precautions": [
+              {
+                "short": "Basic Protections",
+                "details": [
+                  "Turn on firewall in router",
+                  "Restart router every night",
+                  "Write passwords on paper",
+                  "Use antivirus software",
+                  "Stop auto install of apps",
+                  "Check battery use weekly",
+                  "Scan for viruses often",
+                  "Keep apps from unknown sources off",
+                  "Use strong passwords",
+                  "Turn off Bluetooth when not needed"
+                ]
+              },
+              {
+                "short": "Safe Network Habits",
+                "details": [
+                  "Don't give Wi-Fi password to others",
+                  "Avoid banking on public Wi-Fi",
+                  "Restart devices once a week",
+                  "Check router lights daily",
+                  "Update router every year",
+                  "Place router in open space",
+                  "Turn off unused devices",
+                  "Don’t let guests connect often",
+                  "Log out from shared devices",
+                  "Disable Wi-Fi if not in use"
+                ]
+              },
+              {
+                "short": "Regular Checks",
+                "details": [
+                  "Check who is using your Wi-Fi",
+                  "Look for strange apps weekly",
+                  "Make sure updates are done",
+                  "Look at data usage often",
+                  "Check battery heat",
+                  "See if speed drops often"
+                ]
+              },
+              {
+                "short": "Safe Browsing",
+                "details": [
+                  "Don’t click random pop-ups",
+                  "Use an ad blocker",
+                  "Only download from safe sites",
+                  "Avoid strange links in emails",
+                  "Use incognito for personal tasks",
+                  "Use trusted browsers"
+                ]
+              },
+              {
+                "short": "Secure Devices",
+                "details": [
+                  "Use screen lock on phone",
+                  "Don't root or jailbreak devices",
+                  "Don’t save passwords in browser",
+                  "Turn off Wi-Fi when not in use",
+                  "Back up data monthly",
+                  "Avoid too many app permissions"
+                ]
+              }
+            ],
+            "explanations": [
+              "Simple network or device issues can cause low confidence problems.",
+              "These issues can be fixed at home easily.",
+              "They often happen with many users but are not serious.",
+              "Taking early steps can stop big problems later.",
+              "Most of these are warning signs, not real threats yet."
+            ]
+          },
+          
+          {
+            "min_confidence": 34,
+            "max_confidence": 66,
+            "causes": [
+              {
+                "short": "Serious Hacking Signs",
+                "details": [
+                  "Can't login to accounts",
+                  "Strange bank transactions",
+                  "Friends getting spam from you",
+                  "Computer making weird noises",
+                  "Files disappearing or changing",
+                  "Webcam light turns on randomly",
+                  "Getting locked out of social media",
+                  "Security questions changed"
+                ]
+              },
+              {
+                "short": "Network Attacks",
+                "details": [
+                  "Internet stops working suddenly",
+                  "All devices get hot",
+                  "Unknown software installed",
+                  "Browser goes to strange sites",
+                  "Password change emails",
+                  "Ransom notes or popups appear",
+                  "Wi-Fi turns off by itself"
+                ]
+              },
+              {
+                "short": "Spyware or Tracking",
+                "details": [
+                  "Location always turned on",
+                  "Battery drains super fast",
+                  "Microphone light stays on",
+                  "You hear clicking or static sounds",
+                  "Apps asking strange permissions",
+                  "Calls drop or echo weirdly"
+                ]
+              },
+              {
+                "short": "Email & Account Issues",
+                "details": [
+                  "You get login alerts from other countries",
+                  "Emails being sent without you knowing",
+                  "Can't reset passwords",
+                  "You get blocked on apps",
+                  "You see unknown accounts linked"
+                ]
+              },
+              {
+                "short": "App or Software Hijack",
+                "details": [
+                  "Apps open or close on their own",
+                  "Phone or PC restarts without reason",
+                  "Settings are changed without permission",
+                  "Antivirus is turned off",
+                  "Pop-ups say you have a virus",
+                  "Ads show even when offline"
+                ]
+              }
+            ],
+            "steps": [
+              {
+                "short": "Emergency Actions",
+                "details": [
+                  "Disconnect internet cable or Wi-Fi",
+                  "Change all your passwords",
+                  "Turn on 2-factor login",
+                  "Scan everything for viruses or malware",
+                  "Check your bank transactions",
+                  "Call your internet provider or IT support"
+                ]
+              },
+              {
+                "short": "Device Protection",
+                "details": [
+                  "Turn off remote control features",
+                  "Disable Bluetooth and Wi-Fi if not needed",
+                  "Cover your camera with a sticker or tape",
+                  "Back up your most important files",
+                  "Reset or wipe old phones and laptops",
+                  "Use an ad-blocker in your browser"
+                ]
+              },
+              {
+                "short": "Account Safety",
+                "details": [
+                  "Remove unknown devices from your accounts",
+                  "Logout from all sessions on social media",
+                  "Check login activity in Gmail/Facebook",
+                  "Delete saved passwords in browsers",
+                  "Remove unknown payment methods",
+                  "Enable alerts for new logins"
+                ]
+              },
+              {
+                "short": "Wi-Fi & Router Security",
+                "details": [
+                  "Change your router login and password",
+                  "Disable remote access on your router",
+                  "Reset router to factory settings",
+                  "Turn off guest networks",
+                  "Update router firmware",
+                  "Block suspicious devices"
+                ]
+              },
+              {
+                "short": "App & File Checks",
+                "details": [
+                  "Uninstall unknown or shady apps",
+                  "Check file history for recent edits",
+                  "Look for large data uploads",
+                  "Use a trusted malware scanner",
+                  "Stop background syncing if unsure",
+                  "Turn off app access to location/mic/camera"
+                ]
+              }
+            ],
+            "precautions": [
+              {
+                "short": "Advanced Security",
+                "details": [
+                  "Freeze your credit report if needed",
+                  "Use fake answers for security questions",
+                  "Avoid using your real name online",
+                  "Shred old papers with personal info",
+                  "Check if your email is on dark web",
+                  "Limit password guess attempts"
+                ]
+              },
+              {
+                "short": "Money Safety",
+                "details": [
+                  "Turn on alerts for all money moves",
+                  "Use prepaid or virtual cards online",
+                  "Keep savings and spending accounts separate",
+                  "Watch your credit score every month",
+                  "Report any hacking to your bank fast",
+                  "Use cash when possible for small buys"
+                ]
+              },
+              {
+                "short": "Device Safety Habits",
+                "details": [
+                  "Don’t save passwords in browsers",
+                  "Lock your devices with strong codes",
+                  "Update software regularly",
+                  "Use only trusted chargers",
+                  "Turn off location when not needed",
+                  "Restart your device weekly"
+                ]
+              },
+              {
+                "short": "Smart Account Use",
+                "details": [
+                  "Don’t use same password for all accounts",
+                  "Keep backup email for recovery",
+                  "Check app permissions regularly",
+                  "Sign out from shared computers",
+                  "Use secure password manager apps",
+                  "Limit personal info shared online"
+                ]
+              },
+              {
+                "short": "Daily Checks",
+                "details": [
+                  "Check battery and data usage daily",
+                  "Look at login alerts regularly",
+                  "Scan device every week",
+                  "Clear cache and junk files often",
+                  "Turn off auto-connection to public Wi-Fi",
+                  "Review connected apps monthly"
+                ]
+              }
+            ],
+            "explanations": [
+              "Medium confidence: There are real signs of hacking.",
+              "The problem is serious but you can still fix it fast.",
+              "You may need expert help if it doesn’t stop.",
+              "These attacks usually target your money or data.",
+              "Act quickly to stop more damage from happening."
+            ]
+          }
+          ,
+          {
+            "min_confidence": 67,
+            "max_confidence": 100,
+            "causes": [
+              {
+                "short": "Critical Threats",
+                "details": [
+                  "Complete device is locked",
+                  "Blackmail or ransom messages",
+                  "Burning smell or heat from device",
+                  "All files encrypted or missing",
+                  "Fake police warning on screen",
+                  "Strange voices or sounds from speakers"
+                ]
+              },
+              {
+                "short": "System Takeover",
+                "details": [
+                  "You can't control your phone or PC",
+                  "Someone demands money to unlock files",
+                  "Scary or threatening emails",
+                  "All social media accounts hacked",
+                  "Online payments made without permission",
+                  "Fake law enforcement messages appear"
+                ]
+              },
+              {
+                "short": "Physical Signs",
+                "details": [
+                  "Laptop or phone overheats fast",
+                  "Keyboard types on its own",
+                  "Screen flickers or goes black often",
+                  "Cameras or microphones turn on",
+                  "Devices shut down suddenly",
+                  "Battery drains even when off"
+                ]
+              },
+              {
+                "short": "Serious Identity Theft",
+                "details": [
+                  "New accounts opened in your name",
+                  "Your SIM card is cloned",
+                  "You stop getting phone calls/texts",
+                  "Loan or credit card bills appear",
+                  "Someone used your name in scams"
+                ]
+              },
+              {
+                "short": "Danger to Family or Friends",
+                "details": [
+                  "Family members get weird texts from you",
+                  "Your home address is shared online",
+                  "Kids' devices are acting strange",
+                  "Unknown people try to contact you",
+                  "Social accounts used for threats"
+                ]
+              }
+            ],
+            "steps": [
+              {
+                "short": "Last Resort Actions",
+                "details": [
+                  "Unplug all electronic devices",
+                  "Call national cyber crime helpline",
+                  "Visit nearby police station",
+                  "Report to your bank's fraud unit",
+                  "Use a backup phone if possible",
+                  "Take pictures or notes of everything"
+                ]
+              },
+              {
+                "short": "Recovery Plan",
+                "details": [
+                  "Factory reset all affected devices",
+                  "Replace your SIM card and credit cards",
+                  "Change all your phone numbers",
+                  "Talk to a lawyer or legal expert",
+                  "Buy and set up a new router",
+                  "Start fresh with secure new accounts"
+                ]
+              },
+              {
+                "short": "Secure Money and Identity",
+                "details": [
+                  "Freeze your bank and credit accounts",
+                  "Check your credit report for misuse",
+                  "Alert your insurance company",
+                  "Cancel auto payments for now",
+                  "Inform your job or school if needed",
+                  "Keep proof of all actions you take"
+                ]
+              },
+              {
+                "short": "Protect Others Around You",
+                "details": [
+                  "Tell family and friends about the hack",
+                  "Check and clean their devices too",
+                  "Change shared Wi-Fi and passwords",
+                  "Use private group chats only",
+                  "Watch for scams using your name",
+                  "Ask kids to report strange messages"
+                ]
+              },
+              {
+                "short": "Restart Safely",
+                "details": [
+                  "Get new email and online accounts",
+                  "Use trusted security apps only",
+                  "Avoid old backups that may be infected",
+                  "Turn off auto-sync during setup",
+                  "Keep all receipts and reports safe"
+                ]
+              }
+            ],
+            "precautions": [
+              {
+                "short": "After Attack",
+                "details": [
+                  "Keep copies of error messages or warnings",
+                  "Take photos of device damage",
+                  "Save a copy of your police report",
+                  "Use cash or prepaid cards for now",
+                  "Create new email addresses",
+                  "Change the locks at home if needed"
+                ]
+              },
+              {
+                "short": "Future Protection",
+                "details": [
+                  "Install outdoor and indoor security cameras",
+                  "Always use a VPN for internet",
+                  "Buy identity theft protection or insurance",
+                  "Teach safety steps to your family",
+                  "Keep some emergency cash hidden",
+                  "Back up your files to a USB drive"
+                ]
+              },
+              {
+                "short": "Home and Network Safety",
+                "details": [
+                  "Use separate Wi-Fi for guests",
+                  "Don't reuse passwords anywhere",
+                  "Hide your home network name",
+                  "Disable smart home devices if not needed",
+                  "Set up firewalls on all routers",
+                  "Use long, hard-to-guess passwords"
+                ]
+              },
+              {
+                "short": "Online Behavior",
+                "details": [
+                  "Don't click unknown links or files",
+                  "Avoid using personal details online",
+                  "Always logout after using websites",
+                  "Use secure browsers with ad blockers",
+                  "Don’t download pirated software",
+                  "Report fake websites to authorities"
+                ]
+              },
+              {
+                "short": "Emergency Ready",
+                "details": [
+                  "Write down emergency contacts",
+                  "Keep a backup phone or SIM card",
+                  "Store emergency steps offline",
+                  "Know how to reach cybercrime help fast",
+                  "Train your family on what to do",
+                  "Keep antivirus software updated"
+                ]
+              }
+            ],
+            "explanations": [
+              "High confidence: Full control lost to hackers",
+              "This is very serious – you need expert help now",
+              "You and your family’s safety could be at risk",
+              "Your money and identity are in danger",
+              "Act fast to stop more damage and stay safe"
+            ]
+          }
+          
+    ],
+    "spy":[
+        {
+            "min_confidence": 1,
+            "max_confidence": 33,
+            "causes": [
+              {
+                "short": "Unusual Device Behavior",
+                "details": [
+                  "Battery drains faster than usual",
+                  "Phone heats up without use",
+                  "Microphone activates randomly",
+                  "Camera light blinks suddenly",
+                  "Background noise during calls",
+                  "New unknown apps installed",
+                  "Pop-ups about permissions",
+                  "Device reboots on its own",
+                  "Slow typing or delay on screen",
+                  "Device uses too much data",
+                  "Auto-lock changes suddenly"
+                ]
+              },
+              {
+                "short": "Suspicious Network Activity",
+                "details": [
+                  "Data usage spikes at night",
+                  "New unknown devices connected",
+                  "Frequent failed logins",
+                  "Router lights blink constantly",
+                  "DNS settings changed",
+                  "Unknown IPs accessing network",
+                  "Unusual websites opening",
+                  "Strange search history",
+                  "Random disconnections",
+                  "Remote access software installed",
+                  "Unfamiliar MAC addresses"
+                ]
+              },
+              {
+                "short": "Communication Leaks",
+                "details": [
+                  "Private info leaked online",
+                  "Others know things you said privately",
+                  "You get replies to messages you didn’t send",
+                  "Emails marked as read without opening",
+                  "You receive emails from your own address",
+                  "Contacts receive spam from your number"
+                ]
+              },
+              {
+                "short": "Social Engineering Attempts",
+                "details": [
+                  "You get odd friend requests",
+                  "Unknown numbers message you often",
+                  "Fake job offers or links shared",
+                  "Calls from people claiming to be officials",
+                  "Asking for OTPs or passwords",
+                  "Requests to install unknown apps"
+                ]
+              },
+              {
+                "short": "Security Warnings",
+                "details": [
+                  "Security apps send alerts",
+                  "Two-factor logins fail",
+                  "Login locations don’t match",
+                  "Phone says ‘Device compromised’",
+                  "Firewall keeps blocking apps",
+                  "Antivirus deletes strange files"
+                ]
+              }
+            ],
+            "steps": [
+              {
+                "short": "Immediate Actions",
+                "details": [
+                  "Turn off internet access",
+                  "Restart device in safe mode",
+                  "Uninstall strange apps",
+                  "Change all passwords",
+                  "Run full virus/malware scan",
+                  "Update OS and apps"
+                ]
+              },
+              {
+                "short": "Check Devices",
+                "details": [
+                  "Look at all installed apps",
+                  "See recent app permissions",
+                  "Remove remote control apps",
+                  "Reset browser settings",
+                  "Check battery and data usage",
+                  "See which apps use microphone"
+                ]
+              },
+              {
+                "short": "Secure Network",
+                "details": [
+                  "Change Wi-Fi password",
+                  "Check connected devices",
+                  "Disable unknown IP access",
+                  "Reset router to factory settings",
+                  "Turn off remote access",
+                  "Use strong encryption (WPA3)"
+                ]
+              },
+              {
+                "short": "Notify Authorities",
+                "details": [
+                  "Report suspicious activity to cyber cell",
+                  "Inform your internet provider",
+                  "Tell close contacts about the breach",
+                  "Keep record of suspicious calls or emails",
+                  "Do not share sensitive info for now",
+                  "Avoid online banking till issue is fixed"
+                ]
+              },
+              {
+                "short": "Reset if Needed",
+                "details": [
+                  "Backup important files",
+                  "Do a factory reset",
+                  "Reinstall essential apps only",
+                  "Avoid restoring from untrusted backups",
+                  "Re-secure all accounts after reset",
+                  "Use fresh and unique passwords"
+                ]
+              }
+            ],
+            "precautions": [
+              {
+                "short": "Stay Alert",
+                "details": [
+                  "Check device for new apps weekly",
+                  "Review app permissions often",
+                  "Use antivirus on all devices",
+                  "Don’t ignore app warnings",
+                  "Watch for camera/mic use",
+                  "Delete suspicious SMS/emails",
+                  "Turn off permissions not needed",
+                  "Don’t leave devices unattended",
+                  "Use secure lock screens",
+                  "Turn off GPS when not needed"
+                ]
+              },
+              {
+                "short": "Smart Online Habits",
+                "details": [
+                  "Avoid clicking unknown links",
+                  "Don't share personal info online",
+                  "Don’t save passwords in browser",
+                  "Log out of unused accounts",
+                  "Avoid public Wi-Fi for banking",
+                  "Use VPN on unsafe networks",
+                  "Do not download cracked apps",
+                  "Check sender address before clicking",
+                  "Report phishing emails",
+                  "Ignore fake pop-up warnings"
+                ]
+              },
+              {
+                "short": "Protect Accounts",
+                "details": [
+                  "Use two-factor authentication",
+                  "Change passwords monthly",
+                  "Use different passwords for each app",
+                  "Check account login history",
+                  "Logout from all devices if unsure",
+                  "Turn on login alerts"
+                ]
+              },
+              {
+                "short": "Watch Network",
+                "details": [
+                  "Check Wi-Fi device list weekly",
+                  "Limit smart home connections",
+                  "Turn off router when not in use",
+                  "Block unknown devices",
+                  "Enable router firewall",
+                  "Disable UPnP"
+                ]
+              },
+              {
+                "short": "Be App-Safe",
+                "details": [
+                  "Only install apps from trusted stores",
+                  "Read reviews before downloading",
+                  "Don’t accept all app permissions",
+                  "Avoid third-party app stores",
+                  "Update apps regularly",
+                  "Uninstall apps not used"
+                ]
+              }
+            ],
+            "explanations": [
+              "Spy attacks at low confidence levels often start with small signs.",
+              "They can be tested or early-stage breaches, not always harmful yet.",
+              "Fixing things early can stop serious data theft or spying.",
+              "Low signs may just be bad apps or malware, not always advanced spyware.",
+              "Taking small precautions now helps avoid big problems later."
+            ]
+          },          
+        {
+            "min_confidence": 34,
+            "max_confidence": 66,
+            "causes": [
+              {
+                "short": "Suspicious Monitoring",
+                "details": [
+                  "Camera light turns on randomly",
+                  "Microphone activates without apps",
+                  "Screen recording detected",
+                  "Browser history doesn't match usage",
+                  "Battery drains faster than usual",
+                  "Apps requesting odd permissions",
+                  "Sudden background data usage",
+                  "Unfamiliar remote login alerts",
+                  "Login sessions in unknown locations",
+                  "Voice assistant triggers randomly"
+                ]
+              },
+              {
+                "short": "Phishing or Identity Theft",
+                "details": [
+                  "Emails asking for personal data",
+                  "Messages from unknown contacts",
+                  "Duplicate social media accounts",
+                  "Fake job or offer emails",
+                  "Bank OTPs arriving without action",
+                  "Unfamiliar login attempts",
+                  "Account recovery notifications"
+                ]
+              },
+              {
+                "short": "Compromised Accounts",
+                "details": [
+                  "Password changed without notice",
+                  "Can't log into familiar apps",
+                  "Unfamiliar purchases made",
+                  "App settings modified",
+                  "New contacts or emails added",
+                  "Cloud storage shows strange uploads"
+                ]
+              },
+              {
+                "short": "Infected Software",
+                "details": [
+                  "Installed apps you didn’t approve",
+                  "Security app disabled",
+                  "System settings inaccessible",
+                  "Frequent system errors",
+                  "Phone or PC lags without cause",
+                  "Pop-ups even when browser is closed"
+                ]
+              }
+            ],
+            "steps": [
+              {
+                "short": "Initial Countermeasures",
+                "details": [
+                  "Disconnect from internet immediately",
+                  "Uninstall unknown apps",
+                  "Run a full antivirus scan",
+                  "Check all account login activity",
+                  "Use a secure device to change passwords",
+                  "Enable 2FA everywhere"
+                ]
+              },
+              {
+                "short": "Network Security Check",
+                "details": [
+                  "Reset router settings",
+                  "Change all device passwords",
+                  "Log out of all active sessions",
+                  "Check router logs for unusual activity",
+                  "Disable unused services like UPnP",
+                  "Use MAC filtering on Wi-Fi"
+                ]
+              },
+              {
+                "short": "Secure Communication",
+                "details": [
+                  "Use encrypted messaging apps",
+                  "Avoid discussing sensitive topics online",
+                  "Do not click unknown links",
+                  "Use email aliases for subscriptions",
+                  "Block suspicious senders",
+                  "Use a privacy-focused browser"
+                ]
+              },
+              {
+                "short": "Restore Device Trust",
+                "details": [
+                  "Reinstall OS if needed",
+                  "Update all apps and OS",
+                  "Install firewall and security apps",
+                  "Limit app permissions",
+                  "Clear all browser extensions",
+                  "Stop auto backups temporarily"
+                ]
+              }
+            ],
+            "precautions": [
+              {
+                "short": "Routine Cyber Hygiene",
+                "details": [
+                  "Update passwords every 3 months",
+                  "Monitor app permissions monthly",
+                  "Disable unused hardware like mic/cam",
+                  "Backup data to offline drive",
+                  "Don’t auto-connect to open networks",
+                  "Clear browsing data weekly",
+                  "Scan for threats bi-weekly"
+                ]
+              },
+              {
+                "short": "Device Hardening",
+                "details": [
+                  "Use hardware-based 2FA",
+                  "Enable secure boot",
+                  "Encrypt your device",
+                  "Avoid jailbreaking or rooting",
+                  "Install apps only from trusted sources",
+                  "Turn off developer options"
+                ]
+              },
+              {
+                "short": "Privacy Protection",
+                "details": [
+                  "Cover camera when not in use",
+                  "Mute mic physically if possible",
+                  "Use browser with tracker blocking",
+                  "Avoid syncing contacts to all apps",
+                  "Turn off location sharing by default",
+                  "Set app access to 'while using only'"
+                ]
+              },
+              {
+                "short": "Network Awareness",
+                "details": [
+                  "Rename Wi-Fi to avoid drawing attention",
+                  "Use a VPN on public networks",
+                  "Limit smart home device exposure",
+                  "Update router firmware regularly",
+                  "Turn off Wi-Fi when not needed",
+                  "Avoid connecting to suspicious networks"
+                ]
+              }
+            ],
+            "explanations": [
+              "Medium confidence: Signs of espionage or spying behavior are detected.",
+              "Attackers may already have partial access to your systems.",
+              "Stealth attacks aim to collect information, not immediate damage.",
+              "Quick action reduces long-term risk and damage.",
+              "If ignored, spying can escalate to full control or blackmail."
+            ]
+          },
+          {
+            "min_confidence": 67,
+            "max_confidence": 100,
+            "causes": [
+              {
+                "short": "Confirmed Spyware Behavior",
+                "details": [
+                  "Device camera turns on silently",
+                  "Microphone records without permission",
+                  "Keystrokes being logged",
+                  "Screenshots taken automatically",
+                  "Files accessed remotely",
+                  "Unusual system-level permissions granted",
+                  "Spyware app hidden in system folder",
+                  "Frequent data packets sent to unknown IPs",
+                  "Steady CPU usage without open apps",
+                  "You receive copies of your own documents",
+                  "Encrypted files appear suddenly"
+                ]
+              },
+              {
+                "short": "Controlled Remote Access",
+                "details": [
+                  "Screen mirroring without your consent",
+                  "Files deleted or modified without action",
+                  "System settings changed remotely",
+                  "Device locks/unlocks on its own",
+                  "Remote commands being executed",
+                  "Network camera (CCTV) being accessed",
+                  "Your actions mirrored on another screen",
+                  "GPS locations shared with others",
+                  "Photos accessed from gallery remotely",
+                  "Calls made from your number"
+                ]
+              },
+              {
+                "short": "Identity Compromise",
+                "details": [
+                  "Multiple accounts hacked at once",
+                  "Sensitive info leaked online",
+                  "Bank account transactions unknown to you",
+                  "SIM card swap or cloning detected",
+                  "Two-step verification bypassed",
+                  "Your voice used in AI-generated calls",
+                  "Your ID documents used for unknown accounts"
+                ]
+              },
+              {
+                "short": "High-Level Threat Detection",
+                "details": [
+                  "Security experts detect spyware",
+                  "Corporate IT raises red alert",
+                  "Known APT (Advanced Persistent Threat) signatures match",
+                  "Forensic analysis confirms breach",
+                  "Device marked as compromised in MDM",
+                  "Surveillance linked to government or corporate espionage"
+                ]
+              }
+            ],
+            "steps": [
+              {
+                "short": "Isolate Device Immediately",
+                "details": [
+                  "Turn off Wi-Fi and mobile data",
+                  "Put device in airplane mode",
+                  "Physically remove SIM card",
+                  "Disable Bluetooth and hotspot",
+                  "Avoid connecting to other devices",
+                  "Do not use the device until secured"
+                ]
+              },
+              {
+                "short": "Collect Digital Evidence",
+                "details": [
+                  "Take screenshots of suspicious activity",
+                  "Use secure device to document everything",
+                  "Backup logs and system reports",
+                  "Note down strange IPs and access times",
+                  "Preserve device state for forensic analysis",
+                  "Use trusted device to report breach"
+                ]
+              },
+              {
+                "short": "Involve Cybercrime Experts",
+                "details": [
+                  "Report immediately to cyber crime cell",
+                  "Consult with security professionals",
+                  "Submit device for forensic investigation",
+                  "Cooperate with law enforcement",
+                  "Avoid sharing breach details publicly",
+                  "Inform affected contacts securely"
+                ]
+              },
+              {
+                "short": "Neutralize the Threat",
+                "details": [
+                  "Factory reset is not enough – consider flashing firmware",
+                  "Wipe the device via secure bootloader",
+                  "Change all passwords from a clean device",
+                  "Revoke access to compromised accounts",
+                  "Scan other connected devices for infection",
+                  "Get a new SIM and device if cloning is suspected"
+                ]
+              },
+              {
+                "short": "Strengthen Digital Safety",
+                "details": [
+                  "Use hardware 2FA keys",
+                  "Encrypt all communication",
+                  "Get identity monitoring services",
+                  "Rebuild systems from trusted sources",
+                  "Use only verified and audited apps",
+                  "Adopt zero-trust policy for all devices"
+                ]
+              }
+            ],
+            "precautions": [
+              {
+                "short": "Maximum Security Practices",
+                "details": [
+                  "Enable full-disk encryption",
+                  "Use privacy-focused OS (e.g., GrapheneOS)",
+                  "Disable voice assistants and biometrics",
+                  "Keep mic and camera physically covered",
+                  "Disable background app refresh",
+                  "Perform regular digital forensics scans",
+                  "Avoid syncing personal data to cloud"
+                ]
+              },
+              {
+                "short": "High-Risk User Measures",
+                "details": [
+                  "Use burner devices when needed",
+                  "Change devices periodically",
+                  "Avoid reusing same devices for sensitive and personal use",
+                  "Keep software minimal on high-risk devices",
+                  "Use sandboxing or virtual machines for risky actions"
+                ]
+              },
+              {
+                "short": "Network-Level Defense",
+                "details": [
+                  "Use firewalls with packet inspection",
+                  "Monitor network logs continuously",
+                  "Segment your network and IoT devices",
+                  "Use encrypted DNS (DNS-over-HTTPS)",
+                  "Set up alerts for strange traffic",
+                  "Audit connected devices weekly"
+                ]
+              },
+              {
+                "short": "Proactive Threat Awareness",
+                "details": [
+                  "Subscribe to threat intel reports",
+                  "Get notified about zero-day exploits",
+                  "Train yourself in cyber hygiene",
+                  "Stay informed on latest spyware",
+                  "Regularly assess digital footprint",
+                  "Avoid posting personal habits online"
+                ]
+              },
+              {
+                "short": "Data Control",
+                "details": [
+                  "Use end-to-end encrypted services",
+                  "Avoid cloud auto-sync for photos/files",
+                  "Log out from devices no longer in use",
+                  "Delete old accounts/data from web",
+                  "Use aliases for non-official tasks",
+                  "Minimize digital presence wherever possible"
+                ]
+              }
+            ],
+            "explanations": [
+              "A high confidence score means spyware is highly likely or confirmed.",
+              "Such threats are often targeted and advanced, possibly linked to espionage.",
+              "Taking quick and professional action is critical to limit damage.",
+              "Ignoring such signs can lead to financial loss, identity theft, and more.",
+              "Staying informed, alert, and practicing strict digital hygiene is key for safety."
+            ]
+          }
+          
+          
+    ]
+  }
