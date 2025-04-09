@@ -86,8 +86,9 @@
         <h4>Predicted Attack Type: <strong>{{ attack_type }}</strong></h4>
         <p>Confidence: <strong>{{ confidence }}%</strong></p>
     </div>
-    <!-- Causes Section -->
-    <div class="alert alert-danger mt-3">
+    
+<!-- Causes Section -->
+<div class="alert alert-danger mt-3">
         <h5>Likely Causes (Confidence: {{ confidence }}%):</h5>
         <div class="accordion">
             {% for cause in causes %}
@@ -124,7 +125,7 @@
             </div>
             {% endfor %}
         </div>
-    </div>
+</div>
 
 <!-- Steps Section -->
 <div class="alert alert-success mt-3">
