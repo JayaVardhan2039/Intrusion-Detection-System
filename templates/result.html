@@ -1,599 +1,1973 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediction Result</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <style>
-        /* Chatbot button and container styles */
-        .chatbot-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediction Result | Intrusion Detection System</title>
+<style>
+    :root {
+        --primary: #0a2540;
+        --primary-light: #1a3a5f;
+        --primary-dark: #051b30;
+        --accent: #00a5cf;
+        --accent-light: #33b5d9;
+        --success: #0ca678;
+        --warning: #f59f00;
+        --danger: #e03131;
+        --text: #333333;
+        --text-light: #6c757d;
+        --text-lighter: #adb5bd;
+        --light-gray: #f5f7fa;
+        --border: #e0e4e9;
+        --shadow: rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+        background-color: #ffffff;
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+    
+    .header {
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 20px 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 30px;
+    }
+    
+    .logo {
+        display: flex;
+        align-items: center;
+    }
+    
+    .logo img {
+        height: 40px;
+        margin-right: 15px;
+    }
+    
+    .logo h1 {
+        font-size: 22px;
+        color: var(--primary);
+        font-weight: 600;
+    }
+    
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 30px 80px;
+    }
+    
+    .page-title {
+        font-size: 32px;
+        color: var(--primary);
+        margin-bottom: 40px;
+        font-weight: 600;
+        text-align: center;
+        position: relative;
+        padding-bottom: 15px;
+    }
+    
+    .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background-color: var(--accent);
+        border-radius: 3px;
+    }
+    
+    .result-summary {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        border-radius: 12px;
+        padding: 40px;
+        margin-bottom: 50px;
+        color: white;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(10, 37, 64, 0.15);
+    }
+    
+    .result-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+    
+    .result-details {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin-top: 30px;
+        
+        margin-left: 50px;
+    }
+    
+    .result-item {
+        text-align: center;
+    }
+    
+    .result-label {
+        font-size: 16px;
+        margin-bottom: 10px;
+        opacity: 0.9;
+    }
+    
+    .result-value {
+        font-size: 28px;
+        font-weight: 600;
+    }
+    
+    /* Content layout */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 30px;
+        margin-bottom: 50px;
+    }
+    
+    @media (max-width: 992px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .section {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+        overflow: hidden;
+        height: fit-content;
+    }
+    
+    .section-header {
+        padding: 20px 30px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .section-icon {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .section-content {
+        padding: 30px;
+    }
+    
+    .image-container {
+        width: 100%;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    .explanation-image {
+        width: 100%;
+        display: block;
+        border-radius: 8px;
+    }
+    
+    .explanation-text {
+        font-size: 15px;
+        color: var(--text);
+        line-height: 1.7;
+        margin-bottom: 20px;
+        padding: 0 10px;
+    }
+    
+    .explanation-text:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Accordion styles */
+    .accordion {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .accordion-item {
+        border: 1px solid var(--border);
+        margin-bottom: 10px;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: white;
+    }
+    
+    .accordion-header {
+        position: relative;
+    }
+    
+    .accordion-button {
+        width: 100%;
+        text-align: left;
+        padding: 15px 20px;
+        background-color: var(--light-gray);
+        border: none;
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--primary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .accordion-button:hover {
+        background-color: rgba(0, 0, 0, 0.03);
+    }
+    
+    .accordion-button::after {
+        content: '+';
+        font-size: 20px;
+        color: var(--primary);
+    }
+    
+    .accordion-button.active::after {
+        content: '-';
+    }
+    
+    .accordion-collapse {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+    
+    .accordion-collapse.show {
+        max-height: 1000px;
+    }
+    
+    .accordion-body {
+        padding: 20px;
+        background-color: white;
+    }
+    
+    .list-item {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .list-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .item-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .item-text {
+        flex: 1;
+        padding-right: 15px;
+    }
+    
+    /* Button styles */
+    .btn {
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-light);
+        box-shadow: 0 4px 12px rgba(10, 37, 64, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .btn-success {
+        background-color: var(--success);
+        color: white;
+    }
+    
+    .btn-success:hover {
+        background-color: #099268;
+        box-shadow: 0 4px 12px rgba(12, 166, 120, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .btn-danger {
+        background-color: var(--danger);
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        background-color: #c92a2a;
+        box-shadow: 0 4px 12px rgba(224, 49, 49, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .btn-sm {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    .btn-icon {
+        margin-right: 6px;
+    }
+    
+    .ask-btn {
+        position: relative;
+        overflow: hidden;
+        background-color: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .ask-btn:hover {
+        background-color: var(--accent-light);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 165, 207, 0.15);
+    }
+    
+    .ask-btn::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%);
+        transform-origin: 50% 50%;
+    }
+    
+    .ask-btn:active::after {
+        animation: ripple 1s ease-out;
+    }
+    
+    @keyframes ripple {
+        0% {
+            transform: scale(0, 0);
+            opacity: 0.5;
+        }
+        100% {
+            transform: scale(20, 20);
+            opacity: 0;
+        }
+    }
+    
+    /* Actions section */
+    .actions {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 50px;
+    }
+    
+    .action-btn {
+        padding: 14px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .action-btn-primary {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+    }
+    
+    .action-btn-primary:hover {
+        background-color: var(--primary-light);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(10, 37, 64, 0.15);
+    }
+    
+    .action-btn-outline {
+        background-color: transparent;
+        color: var(--danger);
+        border: 2px solid var(--danger);
+    }
+    
+    .action-btn-outline:hover {
+        background-color: var(--danger);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(224, 49, 49, 0.15);
+    }
+    
+    /* LIME explanation styling */
+    .lime-container {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        margin-bottom: 50px;
+    }
+    
+    .lime-header {
+        padding: 20px 30px;
+        background-color: var(--primary);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .lime-title {
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .lime-content {
+        padding: 30px;
+    }
+    
+    .lime-explanation {
+        margin-bottom: 30px;
+    }
+    
+    .lime-text {
+        background-color: var(--light-gray);
+        border-radius: 8px;
+        padding: 20px;
+    }
+    
+    .lime-text h4 {
+        margin-bottom: 15px;
+        color: var(--primary);
+        font-size: 18px;
+    }
+    
+    .lime-text pre {
+        white-space: pre-wrap;
+        font-family: 'Consolas', monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        color: var(--text);
+        background-color: white;
+        padding: 15px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        overflow-x: auto;
+    }
+    
+    /* Chatbot Styles */
+    .chatbot-container {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+    }
+    
+    .chatbot-button {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        box-shadow: 0 4px 15px rgba(10, 37, 64, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .chatbot-button:hover {
+        background-color: var(--primary-light);
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(10, 37, 64, 0.25);
+    }
+    
+    .chatbot-popup {
+        position: absolute;
+        bottom: 80px;
+        right: 0;
+        width: 400px;
+        height: 600px;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        transform-origin: bottom right;
+    }
+    
+    .chatbot-popup.show {
+        display: flex;
+        animation: scaleUp 0.3s ease forwards;
+    }
+    
+    @keyframes scaleUp {
+        0% {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+    
+    .chatbot-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .chatbot-title {
+        font-size: 18px;
+        font-weight: 600;
+    }
+    
+    .chatbot-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .chatbot-action {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: white;
+    }
+    
+    .chatbot-action:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .chatbot-body {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background-color: #f8f9fa;
+    }
+    
+    .chat-message {
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .message-content {
+        max-width: 80%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.5;
+        position: relative;
+    }
+    
+    .message-user {
+        align-self: flex-end;
+    }
+    
+    .message-user .message-content {
+        background-color: var(--primary);
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+    
+    .message-bot {
+        align-self: flex-start;
+    }
+    
+    .message-bot .message-content {
+        background-color: white;
+        color: var(--text);
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .message-time {
+        font-size: 11px;
+        color: var(--text-light);
+        margin-top: 5px;
+        align-self: flex-end;
+    }
+    
+    .chatbot-footer {
+        padding: 15px;
+        border-top: 1px solid var(--border);
+        background-color: white;
+    }
+    
+    .chat-input-container {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .chat-input {
+        flex: 1;
+        padding: 12px 15px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .chat-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(0, 165, 207, 0.1);
+    }
+    
+    .chat-send-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        width: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .chat-send-btn:hover {
+        background-color: var(--primary-light);
+    }
+    
+    .chat-stop-btn {
+        background-color: var(--danger);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        width: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: none;
+    }
+    
+    .chat-stop-btn:hover {
+        background-color: #c92a2a;
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            padding: 30px 20px 60px;
         }
         
-        .chatbot-button {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #0d6efd;
-            color: white;
-            border: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            display: flex;
+        .result-details {
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .section-header {
+            padding: 15px 20px;
+        }
+        
+        .section-content {
+            padding: 20px;
+        }
+        
+        .actions {
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .chatbot-button:hover {
-            background-color: #0b5ed7;
-            transform: scale(1.1);
         }
         
         .chatbot-popup {
-            position: absolute;
+            width: 320px;
+            height: 500px;
             bottom: 70px;
             right: 0;
-            width: 350px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
         }
-        
-        .chatbot-popup.show {
-            display: flex;
-        }
-        
-        /* Style for think tags */
-        think {
-            color: #6c757d;
-            font-style: italic;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 576px) {
-            .chatbot-popup {
-                width: 300px;
-                right: -50px;
-            }
-        }
+    }
+    
+    /* Think tag styling */
+    think {
+        color: var(--text-light);
+        font-style: italic;
+    }
+    
+    /* Code styling */
+    code {
+        font-family: 'Consolas', monospace;
+        background-color: var(--light-gray);
+        padding: 2px 5px;
+        border-radius: 4px;
+        font-size: 0.9em;
+    }
+    
+    pre {
+        background-color: var(--light-gray);
+        padding: 15px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 15px 0;
+    }
+    
+    pre code {
+        background-color: transparent;
+        padding: 0;
+    }
 
-        .item-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
+    /* Pie Chart Styles */
+    .result-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    .chart-container {
+        display: flex;
+        align-items: center;
+        gap: 50px;
+        margin-left: -50px;
+    }
+
+    .pie-chart-container {
+        position: relative;
+        width: 180px;
+        height: 180px;
+    }
+    
+    .pie-chart {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .pie-slice {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        clip: rect(0px, 180px, 180px, 90px);
+        border-radius: 50%;
+        transform-origin: center;
+    }
+    
+    /* Colors for different percentage ranges */
+    .range-1-10 {
+        background: #FF6384; /* Red */
+    }
+    
+    .range-11-20 {
+        background: #36A2EB; /* Blue */
+    }
+    
+    .range-21-30 {
+        background: #FFCE56; /* Yellow */
+    }
+    
+    .range-31-40 {
+        background: #4BC0C0; /* Teal */
+    }
+    
+    .range-41-50 {
+        background: #9966FF; /* Purple */
+    }
+    
+    .range-51-60 {
+        background: #FF9F40; /* Orange */
+    }
+    
+    .range-61-70 {
+        background: #8AC926; /* Green */
+    }
+    
+    .range-71-80 {
+        background: #1982C4; /* Dark Blue */
+    }
+    
+    .range-81-90 {
+        background: #FF595E; /* Coral */
+    }
+    
+    .range-91-100 {
+        background: #6A4C93; /* Indigo */
+    }
+    
+    /* Slice positioning */
+    .slice-1 {
+        transform: rotate(0deg);
+        z-index: 10;
+    }
+    
+    .slice-2 {
+        transform: rotate(36deg);
+        z-index: 9;
+    }
+    
+    .slice-3 {
+        transform: rotate(72deg);
+        z-index: 8;
+    }
+    
+    .slice-4 {
+        transform: rotate(108deg);
+        z-index: 7;
+    }
+    
+    .slice-5 {
+        transform: rotate(144deg);
+        z-index: 6;
+    }
+    
+    .slice-6 {
+        transform: rotate(180deg);
+        z-index: 5;
+    }
+    
+    .slice-7 {
+        transform: rotate(216deg);
+        z-index: 4;
+    }
+    
+    .slice-8 {
+        transform: rotate(252deg);
+        z-index: 3;
+    }
+    
+    .slice-9 {
+        transform: rotate(288deg);
+        z-index: 2;
+    }
+    
+    .slice-10 {
+        transform: rotate(324deg);
+        z-index: 1;
+    }
+    
+    .pie-cover {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: rgba(10, 37, 64, 0.9);
+        transform-origin: left center;
+        transform: rotate(0deg);
+        z-index: 20;
+        transition: transform 1.5s ease-in-out;
+    }
+    
+    .pie-center {
+        position: absolute;
+        width: 70%;
+        height: 70%;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        top: 15%;
+        left: 15%;
+        z-index: 30;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .confidence-text {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 24px;
+        font-weight: 600;
+        color: white;
+    }
+    
+    .confidence-label {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.8);
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    /* Legend styles */
+    .chart-legend {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+        text-align: left;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        border-radius: 8px;
+        max-width: 300px; /* Increased to accommodate 2 columns */
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .legend-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+    }
+
+    @media (max-width: 768px) {
+        .result-content {
+            flex-direction: column;
         }
         
-        .askCyberbot {
-            margin-left: auto;
-            white-space: nowrap;
+        .chart-container {
+            flex-direction: column;
         }
-    </style>
+        
+        .chart-legend {
+            max-width: 100%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
-<body class="container mt-5 text-center">
-    <h2>Intrusion Detection Result</h2>
-    
-    <div class="alert alert-info">
-        <h4>Predicted Attack Type: <strong>{{ attack_type }}</strong></h4>
-        <p>Confidence: <strong>{{ confidence }}%</strong></p>
+<body>
+<header class="header">
+    <div class="header-container">
+        <div class="logo">
+            <h1>Intrusion Detection System</h1>
+        </div>
     </div>
+</header>
+
+<div class="container">
+    <h1 class="page-title">Intrusion Detection Result</h1>
     
-<!-- Causes Section -->
-<div class="alert alert-danger mt-3">
-        <h5>Likely Causes (Confidence: {{ confidence }}%):</h5>
-        <div class="accordion">
-            {% for cause in causes %}
-            <div class="accordion-item">
-                <h2 class="accordion-header" style="display: flex;">
-                    <button class="accordion-button collapsed" type="button" 
-                            data-bs-toggle="collapse" data-bs-target="#cause{{ loop.index }}">
-                        {{ cause.short }}
-                        <button class="btn btn-sm btn-success ms-2 askCyberbot" 
-                                style="padding: 2px 8px; font-size: 0.8rem;" 
-                                data-query="From a Cybersecurity perspective, explain in detail why '{{ cause.short }}' could be a cause for {{ attack_type }} attack with {{ confidence }}% confidence">
-                            ASK Cyberbot
-                        </button>
-                    </button>
-                </h2>
-                <div id="cause{{ loop.index }}" class="accordion-collapse collapse">
-                    <div class="accordion-body">
-                        <ul>
-                            {% for detail in cause.details %}
-                            <li>
-                                <div class="item-container">
-                                    <span>{{ detail }}</span>
-                                    <button class="btn btn-sm btn-success ms-2 askCyberbot" 
-                                            style="padding: 2px 8px; font-size: 0.8rem;"
-                                            data-query="In Cybersecurity terms, explain how '{{ detail }}' contributes to {{ attack_type }} attack with {{ confidence }}% confidence">
-                                        ASK Cyberbot
-                                    </button>
-                                </div>
-                            </li>
-                            {% endfor %}
-                        </ul>
+    <div class="result-summary">
+        <h2 class="result-title">Analysis Complete</h2>
+        <div class="result-content">
+            <!-- Pie Chart Container with Legend -->
+            <div class="chart-container">
+                <div class="pie-chart-container">
+                    <div class="pie-chart">
+                        <!-- Fixed pie slices with correct color classes matching the legend -->
+                        <div class="pie-slice slice-1 range-1-10"></div>
+                        <div class="pie-slice slice-2 range-11-20"></div>
+                        <div class="pie-slice slice-3 range-21-30"></div>
+                        <div class="pie-slice slice-4 range-31-40"></div>
+                        <div class="pie-slice slice-5 range-41-50"></div>
+                        <div class="pie-slice slice-6 range-51-60"></div>
+                        <div class="pie-slice slice-7 range-61-70"></div>
+                        <div class="pie-slice slice-8 range-71-80"></div>
+                        <div class="pie-slice slice-9 range-81-90"></div>
+                        <div class="pie-slice slice-10 range-91-100"></div>
+                        <div class="pie-cover"></div>
+                        <div class="pie-center">
+                            <div class="confidence-text">0%</div>
+                        </div>
+                    </div>
+                    <div class="confidence-label">Confidence Level</div>
+                </div>
+                
+                <!-- Legend for the pie chart -->
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-color range-1-10"></div>
+                        <span>1-50%</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color range-11-20"></div>
+                        <span>51-60%</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color range-21-30"></div>
+                        <span>61-70%</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color range-31-40"></div>
+                        <span>71-80%</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color range-41-50"></div>
+                        <span>81-90%</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color range-51-60"></div>
+                        <span>91-100%</span>
                     </div>
                 </div>
             </div>
-            {% endfor %}
-        </div>
-</div>
-
-<!-- Steps Section -->
-<div class="alert alert-success mt-3">
-    <h5>Required Actions:</h5>
-    <div class="accordion">
-        {% for step in steps %}
-        <div class="accordion-item">
-            <h2 class="accordion-header" style="display: flex;">
-                <button class="accordion-button collapsed" type="button" 
-                        data-bs-toggle="collapse" data-bs-target="#step{{ loop.index }}">
-                    {{ step.short }}
-                    <button class="btn btn-sm btn-success ms-2 askCyberbot" 
-                            style="padding: 2px 8px; font-size: 0.8rem;"
-                            data-query="From a Cybersecurity defense standpoint, explain in detail the step '{{ step.short }}' to mitigate {{ attack_type }} attack with {{ confidence }}% confidence">
-                        ASK Cyberbot
-                    </button>
-                </button>
-            </h2>
-            <div id="step{{ loop.index }}" class="accordion-collapse collapse">
-                <div class="accordion-body">
-                    <ol>
-                        {% for detail in step.details %}
-                        <li>
-                            <div class="item-container">
-                                <span>{{ detail }}</span>
-                                <button class="btn btn-sm btn-success ms-2 askCyberbot" 
-                                        style="padding: 2px 8px; font-size: 0.8rem;"
-                                        data-query="In terms of Cybersecurity implementation, explain how to execute '{{ detail }}' to protect against {{ attack_type }} attack">
-                                    ASK Cyberbot
-                                </button>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    </ol>
+            
+            <!-- Original Result Details -->
+            <div class="result-details">
+                <div class="result-item">
+                    <div class="result-label">Predicted Attack Type</div>
+                    <div class="result-value">{{ attack_type }}</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Confidence Level</div>
+                    <div class="result-value">{{ confidence }}%</div>
                 </div>
             </div>
         </div>
-        {% endfor %}
-    </div>
-</div>
-
-<!-- Precautions Section -->
-<div class="alert alert-warning mt-3">
-    <h5>Precautionary Measures:</h5>
-    <div class="accordion">
-        {% for precaution in precautions %}
-        <div class="accordion-item">
-            <h2 class="accordion-header" style="display: flex;">
-                <button class="accordion-button collapsed" type="button" 
-                        data-bs-toggle="collapse" data-bs-target="#precaution{{ loop.index }}">
-                    {{ precaution.short }}
-                </button>
-                <button class="btn btn-sm btn-success ms-2 askCyberbot" 
-                            style="padding: 2px 8px; font-size: 0.8rem;"
-                            data-query="From a Cybersecurity prevention perspective, explain why '{{ precaution.short }}' is important to prevent {{ attack_type }} attack">
-                        ASK Cyberbot
-                    </button>
-            </h2>
-            <div id="precaution{{ loop.index }}" class="accordion-collapse collapse">
-                <div class="accordion-body">
-                    <ol>
-                        {% for detail in precaution.details %}
-                        <li>
-                            <div class="item-container">
-                                <span>{{ detail }}</span>
-                                <button class="btn btn-sm btn-success ms-2 askCyberbot" 
-                                        style="padding: 2px 8px; font-size: 0.8rem;"
-                                        data-query="In Cybersecurity practice, explain how '{{ detail }}' helps prevent {{ attack_type }} attacks">
-                                    ASK Cyberbot
-                                </button>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    </ol>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-
-<!-- Explanations Section -->
-<div class="alert alert-info mt-3">
-    <h5>Technical Analysis:</h5> 
-    <button class="btn btn-sm btn-success position-absolute top-0 end-0 mt-1 me-2" 
-    id="askCyberbot" 
-    data-query="Provide a comprehensive Cybersecurity technical analysis of {{ attack_type }} attack with {{ confidence }}% confidence level, including typical attack patterns and security indicators"
-    style="padding: 2px 8px; font-size: 0.8rem;">
-ASK Cyberbot
-</button>   
-    <div class="accordion">
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" 
-                        data-bs-toggle="collapse" data-bs-target="#explanations">
-                    View Detailed Explanations
-                </button>
-            </h2>
-            <div id="explanations" class="accordion-collapse collapse">
-                <div class="accordion-body">
-                    <ul>
-                        {% for explanation in explanations %}
-                        <li>
-                            <div class="item-container">
-                                <span>{{ explanation }}</span>
-                                <button class="btn btn-sm btn-success ms-2 askCyberbot" 
-                                        style="padding: 2px 8px; font-size: 0.8rem;"
-                                        data-query="From a Cybersecurity technical standpoint, explain the concept '{{ explanation }}' in the context of {{ attack_type }} attack">
-                                    ASK Cyberbot
-                                </button>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!--<h4>Response:</h4>
-    <p>{{res}}</p>-->
-    <h4>Explainable AI (SHAP Plot and LIME Xpl)</h4>
-    <div class="global-explanations">
-    <h3>Global Feature Importance</h3>
-    <img src="{{ shap_img }}" alt="SHAP Explanation" class="img-fluid mt-3" style="max-width: 80%;">
-    <p>{{ global_explanation }}</p>
-    <p>This shows which principal components most influence model decisions overall</p>
-    </div>
-    <h3>Local Feature Importance</h3>
-    
-    <img src="{{ shap_img1 }}" alt="SHAP Explanation" class="img-fluid mt-3" style="max-width: 80%;" >
-    <p>{{ waterfall_explanation }}</p>
-    <img src="{{ shap_img2 }}" alt="SHAP Explanation" class="img-fluid mt-3" style="max-width: 60%;max-height:50%;" >
-    <p>{{ bar_explanation }}</p>
-    <p>{{ pca_interpretation }}</p>
-
-    <div class="alert alert-secondary">
-        <h5>Feature Importance (LIME(Local Interpretable Model-agnostic Explanation) Explanation):</h5>
-        {{ lime_html|safe }}
-    </div>
-
-    <div class="alert alert-secondary mt-3">
-        <h5>Textual Explanation:</h5>
-        <pre>{{ lime_text }}</pre>
     </div>
     
-    <div class="mt-4">
-        <a href="/predict" class="btn btn-primary">Try Again</a>
-        <a href="/logout" class="btn btn-danger">Logout</a>
-    </div>
+    <!-- Main content grid -->
+    <div class="content-grid">
+        <!-- Left column -->
+        <div>
+            <!-- Causes Section -->
+            <div class="section">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Likely Causes
+                    </h3>
+                    <span>Confidence: {{ confidence }}%</span>
+                </div>
+                <div class="section-content">
+                    <div class="accordion">
+                        {% for cause in causes %}
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <button class="accordion-button" onclick="toggleAccordion(this)">
+                                    {{ cause.short }}
+                                    <button class="ask-btn askCyberbot" 
+                                            data-query="From a Cybersecurity perspective, explain in detail why '{{ cause.short }}' could be a cause for {{ attack_type }} attack with {{ confidence }}% confidence">
+                                        <svg class="btn-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                        </svg>
+                                        Ask Cyberbot
+                                    </button>
+                                </button>
+                            </div>
+                            <div class="accordion-collapse">
+                                <div class="accordion-body">
+                                    <ul class="detail-list">
+                                        {% for detail in cause.details %}
+                                        <li class="list-item">
+                                            <div class="item-container">
+                                                <span class="item-text">{{ detail }}</span>
+                                                <button class="ask-btn askCyberbot" 
+                                                        data-query="In Cybersecurity terms, explain how '{{ detail }}' contributes to {{ attack_type }} attack with {{ confidence }}% confidence">
+                                                    <svg class="btn-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <circle cx="12" cy="12" r="10"></circle>
+                                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                                    </svg>
+                                                    Ask Cyberbot
+                                                </button>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Steps Section -->
+            <div class="section">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="8" y1="6" x2="21" y2="6"></line>
+                            <line x1="8" y1="12" x2="21" y2="12"></line>
+                            <line x1="8" y1="18" x2="21" y2="18"></line>
+                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                        Required Actions
+                    </h3>
+                </div>
+                <div class="section-content">
+                    <div class="accordion">
+                        {% for step in steps %}
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <button class="accordion-button" onclick="toggleAccordion(this)">
+                                    {{ step.short }}
+                                    <button class="ask-btn askCyberbot" 
+                                            data-query="From a Cybersecurity defense standpoint, explain in detail the step '{{ step.short }}' to mitigate {{ attack_type }} attack with {{ confidence }}% confidence">
+                                        <svg class="btn-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                        </svg>
+                                        Ask Cyberbot
+                                    </button>
+                                </button>
+                            </div>
+                            <div class="accordion-collapse">
+                                <div class="accordion-body">
+                                    <ol class="detail-list">
+                                        {% for detail in step.details %}
+                                        <li class="list-item">
+                                            <div class="item-container">
+                                                <span class="item-text">{{ detail }}</span>
+                                                <button class="ask-btn askCyberbot" 
+                                                        data-query="In terms of Cybersecurity implementation, explain how to execute '{{ detail }}' to protect against {{ attack_type }} attack">
+                                                    <svg class="btn-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <circle cx="12" cy="12" r="10"></circle>
+                                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                                    </svg>
+                                                    Ask Cyberbot
+                                                </button>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Local Feature Importance - Bar Chart -->
+            <div class="section">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                            <line x1="3" y1="20" x2="21" y2="20"></line>
+                        </svg>
+                        Local Feature Importance - Bar Chart
+                    </h3>
+                </div>
+                <div class="section-content">
+                    <div class="image-container">
+                        <img src="{{ shap_img2 }}" alt="SHAP Bar Chart" class="explanation-image">
+                    </div>
+                    <p class="explanation-text">{{ bar_explanation | safe}}</p>
+                    <p class="explanation-text">
+                        {{ 
+                          pca_interpretation
+                            .replace('Key original features contributing to principal components:', 'Key original features contributing to principal components:<br>')
+                            .replace('PC1', '<strong>PC1</strong>')
+                            .replace('PC2', '<strong>PC2</strong>')
+                            .replace('PC3', '<strong>PC3</strong>')
+                            .replace('PC4', '<strong>PC4</strong>')
+                            .replace('PC5', '<strong>PC5</strong>')
+                            .replace('PC6', '<strong>PC6</strong>')
+                            .replace('PC7', '<strong>PC7</strong>')
+                            .replace('PC8', '<strong>PC8</strong>')
+                            .replace('PC9', '<strong>PC9</strong>')
+                            .replace('PC10', '<strong>PC10</strong>')
+                            .replace('. ', '.<br>') | safe 
+                        }}
+                      </p>
+                </div>
+            </div>
 
-    <!-- Chatbot Section - Now as a floating button -->
-    <div class="chatbot-container">
-        <button class="chatbot-button" id="chatbotToggle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+        </div>
+        
+        <!-- Right column -->
+        <div>
+            <!-- Global Feature Importance -->
+            <div class="section">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        Global Feature Importance
+                    </h3>
+                </div>
+                <div class="section-content">
+                    <div class="image-container">
+                        <img src="{{ shap_img }}" alt="SHAP Explanation" class="explanation-image">
+                    </div>
+                    <p class="explanation-text">{{ global_explanation | safe }}</p>
+                    <p class="explanation-text">This visualization shows which principal components most influence model decisions overall, helping identify the key factors in detecting intrusions.</p>
+                </div>
+            </div>
+            
+            <!-- Local Feature Importance - Waterfall -->
+            <div class="section">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Local Feature Importance - Waterfall
+                    </h3>
+                </div>
+                <div class="section-content">
+                    <div class="image-container">
+                        <img src="{{ shap_img1 }}" alt="SHAP Waterfall" class="explanation-image">
+                    </div>
+                   <strong><p class="explanation-text">{{ waterfall_explanation }}</p></strong>
+                    <p class="explanation-text">The waterfall chart shows how each feature contributes to pushing the model output from the base value to the final prediction value for this specific instance.</p>
+                </div>
+            </div>
+            
+            
+            
+                            <!-- Precautions Section -->
+                            <div class="section">
+                                <div class="section-header">
+                                    <h3 class="section-title">
+                                        <svg class="section-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                        </svg>
+                                        Precautionary Measures
+                                    </h3>
+                                </div>
+                                <div class="section-content">
+                                    <div class="accordion">
+                                        {% for precaution in precautions %}
+                                        <div class="accordion-item">
+                                            <div class="accordion-header">
+                                                <button class="accordion-button" onclick="toggleAccordion(this)">
+                                                    {{ precaution.short }}
+                                                    <button class="ask-btn askCyberbot" 
+                                                            data-query="From a Cybersecurity prevention perspective, explain why '{{ precaution.short }}' is important to prevent {{ attack_type }} attack">
+                                                        <svg class="btn-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                                        </svg>
+                                                        Ask Cyberbot
+                                                    </button>
+                                                </button>
+                                            </div>
+                                            <div class="accordion-collapse">
+                                                <div class="accordion-body">
+                                                    <ol class="detail-list">
+                                                        {% for detail in precaution.details %}
+                                                        <li class="list-item">
+                                                            <div class="item-container">
+                                                                <span class="item-text">{{ detail }}</span>
+                                                                <button class="ask-btn askCyberbot" 
+                                                                        data-query="In Cybersecurity practice, explain how '{{ detail }}' helps prevent {{ attack_type }} attacks">
+                                                                    <svg class="btn-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                        <circle cx="12" cy="12" r="10"></circle>
+                                                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                                                    </svg>
+                                                                    Ask Cyberbot
+                                                                </button>
+                                                            </div>
+                                                        </li>
+                                                        {% endfor %}
+                                                    </ol>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+            
+                            <!-- Technical Analysis Section -->
+                            <div class="section">
+                                <div class="section-header">
+                                    <h3 class="section-title">
+                                        <svg class="section-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                        </svg>
+                                        Technical Analysis
+                                    </h3>
+                                    <button class="ask-btn" 
+                                            id="askCyberbot" 
+                                            data-query="Provide a comprehensive Cybersecurity technical analysis of {{ attack_type }} attack with {{ confidence }}% confidence level, including typical attack patterns and security indicators">
+                                        <svg class="btn-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                        </svg>
+                                        Ask Cyberbot
+                                    </button>
+                                </div>
+                                <div class="section-content">
+                                    <div class="accordion">
+                                        <div class="accordion-item">
+                                            <div class="accordion-header">
+                                                <button class="accordion-button" onclick="toggleAccordion(this)">
+                                                    View Detailed Explanations
+                                                </button>
+                                            </div>
+                                            <div class="accordion-collapse">
+                                                <div class="accordion-body">
+                                                    <ul class="detail-list">
+                                                        {% for explanation in explanations %}
+                                                        <li class="list-item">
+                                                            <div class="item-container">
+                                                                <span class="item-text">{{ explanation }}</span>
+                                                                <button class="ask-btn askCyberbot" 
+                                                                        data-query="From a Cybersecurity technical standpoint, explain the concept '{{ explanation }}' in the context of {{ attack_type }} attack">
+                                                                    <svg class="btn-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                        <circle cx="12" cy="12" r="10"></circle>
+                                                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                                                    </svg>
+                                                                    Ask Cyberbot
+                                                                </button>
+                                                            </div>
+                                                        </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+            
+        </div>
+    </div>
+    
+    <!-- LIME Explanation Section -->
+    <div class="lime-container">
+        <div class="lime-header">
+            <h3 class="lime-title">
+                <svg class="section-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                    <line x1="9" y1="21" x2="9" y2="9"></line>
+                </svg>
+                LIME Explanation
+            </h3>
+        </div>
+        <div class="lime-content">
+            <div class="lime-explanation">
+                {{ lime_html|safe }}
+            </div>
+            
+            <div class="lime-text">
+                <h4>Textual Explanation:</h4>
+                <pre>{{ lime_text }}</pre>
+            </div>
+        </div>
+    </div>
+    
+    <div class="actions">
+        <a href="/predict" class="action-btn action-btn-primary">
+            <svg class="icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
-        </button>
-        
-        <div class="chatbot-popup" id="chatbotPopup">
-            <div class="bg-primary text-white p-3 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Chat with Ollama</h5>
-                <div>
-                    <button class="btn btn-sm btn-light me-2" id="clearChat">Clear</button>
-                    <button class="btn btn-sm btn-light" id="minimizeChat">_</button>
+            Try Another Prediction
+        </a>
+        <a href="/logout" class="action-btn action-btn-outline">
+            <svg class="icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Logout
+        </a>
+    </div>
+</div>
+
+<!-- Chatbot Section -->
+<div class="chatbot-container">
+    <button class="chatbot-button" id="chatbotToggle">
+        <svg class="icon" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+    </button>
+    
+    <div class="chatbot-popup" id="chatbotPopup">
+        <div class="chatbot-header">
+            <h3 class="chatbot-title">Chat with Cyberbot</h3>
+            <div class="chatbot-actions">
+                <button class="chatbot-action" id="clearChat">
+                    <svg class="icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                </button>
+                <button class="chatbot-action" id="minimizeChat">
+                    <svg class="icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="chatbot-body" id="chatbox">
+            <!-- Chat messages will appear here -->
+            <div class="chat-message message-bot">
+                <div class="message-content">
+                    Hello! I'm Cyberbot, your cybersecurity assistant. How can I help you understand the detected intrusion?
                 </div>
+                <div class="message-time">Just now</div>
             </div>
-            <div id="chatbox" class="border p-3 flex-grow-1" style="height: 300px; overflow-y: auto; background-color: #f8f9fa;">
-                <!-- Chat messages will appear here -->
-            </div>
-            <div class="input-group p-2">
-                <input type="text" id="userInput" class="form-control" placeholder="Type your message here...">
-                <button id="sendButton" class="btn btn-primary">Send</button>
-                <button id="stopButton" class="btn btn-danger" style="display: none;">Stop</button>
+        </div>
+        <div class="chatbot-footer">
+            <div class="chat-input-container">
+                <input type="text" id="userInput" class="chat-input" placeholder="Type your message here...">
+                <button id="sendButton" class="chat-send-btn">
+                    <svg class="icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+                <button id="stopButton" class="chat-stop-btn">
+                    <svg class="icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="6" y="6" width="12" height="12" rx="2" ry="2"></rect>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
- <script>
-        // Chatbot UI elements
-        const chatbotToggle = document.getElementById('chatbotToggle');
-        const chatbotPopup = document.getElementById('chatbotPopup');
-        const minimizeChat = document.getElementById('minimizeChat');
-        const chatbox = document.getElementById('chatbox');
-        const userInput = document.getElementById('userInput');
-        const sendButton = document.getElementById('sendButton');
-        const stopButton = document.getElementById('stopButton');
-        const clearChatButton = document.getElementById('clearChat');
+</div>
+
+<script>
+    // Accordion functionality
+    function toggleAccordion(button) {
+        const accordionItem = button.closest('.accordion-item');
+        const collapse = accordionItem.querySelector('.accordion-collapse');
         
-        let stopGeneration = false;
-        let isUserScrolling = false;
-        let isChatOpen = false;
+        if (collapse.classList.contains('show')) {
+            collapse.classList.remove('show');
+            button.classList.remove('active');
+        } else {
+            collapse.classList.add('show');
+            button.classList.add('active');
+        }
+    }
+    
+    // Chatbot UI elements
+    const chatbotToggle = document.getElementById('chatbotToggle');
+    const chatbotPopup = document.getElementById('chatbotPopup');
+    const minimizeChat = document.getElementById('minimizeChat');
+    const chatbox = document.getElementById('chatbox');
+    const userInput = document.getElementById('userInput');
+    const sendButton = document.getElementById('sendButton');
+    const stopButton = document.getElementById('stopButton');
+    const clearChatButton = document.getElementById('clearChat');
+    
+    let stopGeneration = false;
+    let isUserScrolling = false;
+    let isChatOpen = false;
+    let lastScrollTop = 0;
 
-        // Toggle chat popup
-        chatbotToggle.addEventListener('click', () => {
-            isChatOpen = !isChatOpen;
-            if (isChatOpen) {
-                chatbotPopup.classList.add('show');
-            } else {
-                chatbotPopup.classList.remove('show');
-            }
-        });
-
-        // Minimize chat
-        minimizeChat.addEventListener('click', (e) => {
-            e.stopPropagation();
+    // Toggle chat popup
+    chatbotToggle.addEventListener('click', () => {
+        isChatOpen = !isChatOpen;
+        if (isChatOpen) {
+            chatbotPopup.classList.add('show');
+            // Reset scroll position when opening
+            setTimeout(() => {
+                chatbox.scrollTop = chatbox.scrollHeight;
+                isUserScrolling = false;
+            }, 100);
+        } else {
             chatbotPopup.classList.remove('show');
             isChatOpen = false;
-        });
+        }
+    });
 
-        // Event listener for the clear button
-        clearChatButton.addEventListener('click', () => {
-            chatbox.innerHTML = ''; // Clear all messages in the chatbox
-        });
+    // Minimize chat
+    minimizeChat.addEventListener('click', (e) => {
+        e.stopPropagation();
+        chatbotPopup.classList.remove('show');
+        isChatOpen = false;
+    });
 
-        // Function to append messages to the chatbox
-        function appendMessage(sender, message, isFormatted = false, align = 'left') {
-            // Process think tags first
-            message = message.replace(/<think>(.*?)<\/think>/g, '<think>$1</think>');
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('mb-2', 'd-flex', align === 'right' ? 'justify-content-end' : 'justify-content-start');
-            
-            messageDiv.innerHTML = `<div class="p-2 rounded" style="max-width: 70%; background-color: ${align === 'right' ? '#d1e7dd' : '#f8d7da'};">
-                <strong>${sender}:</strong> ${isFormatted ? message : formatResponse(message)}
-            </div>`;
-            
-            chatbox.appendChild(messageDiv);
-            if (!isUserScrolling) {
-                chatbox.scrollTop = chatbox.scrollHeight; // Auto-scroll to the bottom
+    // Event listener for the clear button
+    clearChatButton.addEventListener('click', () => {
+        chatbox.innerHTML = ''; // Clear all messages in the chatbox
+        
+        // Add welcome message back
+        const welcomeMessage = document.createElement('div');
+        welcomeMessage.classList.add('chat-message', 'message-bot');
+        welcomeMessage.innerHTML = `
+            <div class="message-content">
+                Hello! I'm Cyberbot, your cybersecurity assistant. How can I help you understand the detected intrusion?
+            </div>
+            <div class="message-time">Just now</div>
+        `;
+        chatbox.appendChild(welcomeMessage);
+        
+        // Reset scroll position
+        chatbox.scrollTop = chatbox.scrollHeight;
+        isUserScrolling = false;
+    });
+
+    // Function to append messages to the chatbox
+    function appendMessage(sender, message, isFormatted = false, align = 'left') {
+        // Process think tags first
+        message = message.replace(/<Thinking>(.*?)<\/think>/g, '<Thinking>$1</Thinking>');
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('chat-message', align === 'right' ? 'message-user' : 'message-bot');
+        
+        const now = new Date();
+        const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                          now.getMinutes().toString().padStart(2, '0');
+        
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                ${isFormatted ? message : formatResponse(message)}
+            </div>
+            <div class="message-time">${timeString}</div>
+        `;
+        
+        chatbox.appendChild(messageDiv);
+        
+        // Auto-scroll to bottom unless user is manually scrolling
+        if (!isUserScrolling) {
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    }
+
+    // Function to format Markdown to HTML
+    function formatResponse(response) {
+        // Headers
+        response = response.replace(/^# (.*$)/gm, '<h3>$1</h3>');
+        response = response.replace(/^## (.*$)/gm, '<h4>$1</h4>');
+        response = response.replace(/^### (.*$)/gm, '<h5>$1</h5>');
+        
+        // Text styling
+        response = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        response = response.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        
+        // Code blocks
+        response = response.replace(/`(.*?)`/g, '<code>$1</code>');
+        response = response.replace(/\`\`\`([\s\S]*?)\`\`\`/g, '<pre><code>$1</code></pre>');
+        
+        // Lists and quotes
+        response = response.replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>');
+        response = response.replace(/^\* (.*$)/gm, '<ul><li>$1</li></ul>');
+        response = response.replace(/^\d\. (.*$)/gm, '<ol><li>$1</li></ol>');
+        
+        // Links and images
+        response = response.replace(/\[(.*?)\]$(.*?)$/g, '<a href="$2" target="_blank">$1</a>');
+        response = response.replace(/!\[(.*?)\]$(.*?)$/g, '<img src="$2" alt="$1">');
+        
+        // Line breaks
+        response = response.replace(/\n/g, '<br>');
+        
+        return response;
+    }
+
+    // Event listener for the send button
+    sendButton.addEventListener('click', async () => {
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        // Append user message to chatbox
+        appendMessage('You', message, false, 'right');
+        userInput.value = '';
+
+        stopButton.style.display = 'inline-block'; // Show the stop button
+        sendButton.style.display = 'none';
+        stopGeneration = false;
+
+        try {
+            // Use Fetch API to send the request and handle streaming response
+            const response = await fetch('http://localhost:11434/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'deepseek-r1:7b',
+                    prompt: message,
+                    max_tokens: 500
+                })
+            });
+
+            if (!response.body) {
+                throw new Error('ReadableStream not supported in this browser.');
             }
-        }
 
-        // Function to format Markdown to HTML
-        function formatResponse(response) {
-            // Headers
-            response = response.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-            response = response.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-            response = response.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-            
-            // Text styling
-            response = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            response = response.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            
-            // Code blocks
-            response = response.replace(/`(.*?)`/g, '<code>$1</code>');
-            response = response.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-            
-            // Lists and quotes
-            response = response.replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>');
-            response = response.replace(/^\* (.*$)/gm, '<ul><li>$1</li></ul>');
-            response = response.replace(/^\d\. (.*$)/gm, '<ol><li>$1</li></ol>');
-            
-            // Links and images
-            response = response.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
-            response = response.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1">');
-            
-            // Line breaks
-            response = response.replace(/\n/g, '<br>');
-            
-            return response;
-        }
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let ollamaResponse = '';
 
-        // Event listener for the send button
-        sendButton.addEventListener('click', async () => {
-            const message = userInput.value.trim();
-            if (!message) return;
+            // Create a new message div for Ollama's response
+            const ollamaMessageDiv = document.createElement('div');
+            ollamaMessageDiv.classList.add('chat-message', 'message-bot');
+            const ollamaContentDiv = document.createElement('div');
+            ollamaContentDiv.classList.add('message-content');
+            ollamaMessageDiv.appendChild(ollamaContentDiv);
+            const timeDiv = document.createElement('div');
+            timeDiv.classList.add('message-time');
+            const now = new Date();
+            timeDiv.textContent = now.getHours().toString().padStart(2, '0') + ':' + 
+                                 now.getMinutes().toString().padStart(2, '0');
+            ollamaMessageDiv.appendChild(timeDiv);
+            chatbox.appendChild(ollamaMessageDiv);
 
-            // Append user message to chatbox
-            appendMessage('You', message, false, 'right');
-            userInput.value = '';
-
-            stopButton.style.display = 'inline-block'; // Show the stop button
-            sendButton.disabled = true;
-            stopGeneration = false;
-
-            try {
-                // Use Fetch API to send the request and handle streaming response
-                const response = await fetch('http://localhost:11434/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        model: 'deepseek-r1:7b',
-                        prompt: message,
-                        max_tokens: 200
-                    })
-                });
-
-                if (!response.body) {
-                    throw new Error('ReadableStream not supported in this browser.');
+            while (true) {
+                if (stopGeneration) {
+                    console.log('Response generation stopped by user.');
+                    break;
                 }
 
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder('utf-8');
-                let ollamaResponse = '';
+                const { done, value } = await reader.read();
+                if (done) break;
 
-                // Create a new message div for Ollama's response
-                const ollamaMessageDiv = document.createElement('div');
-                ollamaMessageDiv.classList.add('mb-2', 'd-flex', 'justify-content-start');
-                const ollamaContentDiv = document.createElement('div');
-                ollamaContentDiv.classList.add('p-2', 'rounded');
-                ollamaContentDiv.style.maxWidth = '70%';
-                ollamaContentDiv.style.backgroundColor = '#f8d7da';
-                ollamaContentDiv.innerHTML = '<strong>Ollama:</strong> <span class="ollama-response"></span>';
-                ollamaMessageDiv.appendChild(ollamaContentDiv);
-                chatbox.appendChild(ollamaMessageDiv);
-                const responseSpan = ollamaContentDiv.querySelector('.ollama-response');
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split('\n');
 
-                while (true) {
-                    if (stopGeneration) {
-                        console.log('Response generation stopped by user.');
-                        appendMessage('System', 'Response generation stopped', false, 'left');
-                        break;
-                    }
-
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    const chunk = decoder.decode(value, { stream: true });
-                    const lines = chunk.split('\n');
-
-                    for (const line of lines) {
-                        if (line.trim()) {
-                            try {
-                                const data = JSON.parse(line);
-                                if (data.response) {
-                                    ollamaResponse += data.response;
-                                    responseSpan.innerHTML = formatResponse(ollamaResponse);
-                                    if (!isUserScrolling) {
-                                        chatbox.scrollTop = chatbox.scrollHeight;
-                                    }
+                for (const line of lines) {
+                    if (line.trim()) {
+                        try {
+                            const data = JSON.parse(line);
+                            if (data.response) {
+                                ollamaResponse += data.response;
+                                ollamaContentDiv.innerHTML = formatResponse(ollamaResponse);
+                                
+                                // Auto-scroll to bottom unless user is manually scrolling
+                                if (!isUserScrolling) {
+                                    chatbox.scrollTop = chatbox.scrollHeight;
                                 }
-                            } catch (error) {
-                                console.error('Error parsing response line:', error);
                             }
+                        } catch (error) {
+                            console.error('Error parsing response line:', error);
                         }
                     }
                 }
-            } catch (error) {
-                console.error('Error communicating with Ollama API:', error);
-                appendMessage('Ollama', 'Sorry, there was an error processing your request.', false, 'left');
-            } finally {
-                stopButton.style.display = 'none'; // Hide the stop button
-                sendButton.disabled = false;
             }
-        });
+        } catch (error) {
+            console.error('Error communicating with Ollama API:', error);
+            appendMessage('Ollama', 'Sorry, there was an error processing your request.', false, 'left');
+        } finally {
+            stopButton.style.display = 'none'; // Hide the stop button
+            sendButton.style.display = 'inline-block';
+        }
+    });
 
-        // Event listener for the stop button
-        stopButton.addEventListener('click', () => {
-            stopGeneration = true;
-            stopButton.style.display = 'none';
-            sendButton.disabled = false;
-        });
+    // Event listener for the stop button
+    stopButton.addEventListener('click', () => {
+        stopGeneration = true;
+        stopButton.style.display = 'none';
+        sendButton.style.display = 'inline-block';
+    });
 
-        // Allow pressing Enter to send a message
-        userInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                sendButton.click();
+    // Allow pressing Enter to send a message
+    userInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            sendButton.click();
+        }
+    });
+
+    // Improved scroll detection
+    chatbox.addEventListener('scroll', () => {
+        // Store the current scroll position
+        const currentScrollTop = chatbox.scrollTop;
+        
+        // Determine if user is scrolling up (manual scroll)
+        if (currentScrollTop < lastScrollTop) {
+            isUserScrolling = true;
+        }
+        
+        // If user has scrolled to the bottom, enable auto-scrolling again
+        const isAtBottom = Math.abs((chatbox.scrollHeight - chatbox.scrollTop) - chatbox.clientHeight) < 10;
+        if (isAtBottom) {
+            isUserScrolling = false;
+        }
+        
+        // Update last scroll position
+        lastScrollTop = currentScrollTop;
+    });
+
+    // Function for direct queries from Ask Cyberbot buttons
+    async function sendDirectQuery(query) {
+        if (!isChatOpen) {
+            chatbotPopup.classList.add('show');
+            isChatOpen = true;
+            
+            // Reset scroll position when opening
+            setTimeout(() => {
+                chatbox.scrollTop = chatbox.scrollHeight;
+                isUserScrolling = false;
+            }, 100);
+        }
+        
+        // Don't show the actual query, just a simplified version
+        appendMessage('You', "Can you explain this cybersecurity concept?", false, 'right');
+
+        stopButton.style.display = 'inline-block'; // Show the stop button
+        sendButton.style.display = 'none';
+        stopGeneration = false;
+
+        // First show "Thinking..." message
+        const thinkingMessageDiv = document.createElement('div');
+        thinkingMessageDiv.classList.add('chat-message', 'message-bot');
+        const thinkingContentDiv = document.createElement('div');
+        thinkingContentDiv.classList.add('message-content');
+        thinkingContentDiv.innerHTML = "Okay, thinking...";
+        thinkingMessageDiv.appendChild(thinkingContentDiv);
+        const thinkingTimeDiv = document.createElement('div');
+        thinkingTimeDiv.classList.add('message-time');
+        const now = new Date();
+        thinkingTimeDiv.textContent = now.getHours().toString().padStart(2, '0') + ':' + 
+                             now.getMinutes().toString().padStart(2, '0');
+        thinkingMessageDiv.appendChild(thinkingTimeDiv);
+        chatbox.appendChild(thinkingMessageDiv);
+        
+        // Auto-scroll to bottom
+        chatbox.scrollTop = chatbox.scrollHeight;
+
+        try {
+            // Use Fetch API to send the request and handle streaming response
+            const response = await fetch('http://localhost:11434/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'deepseek-r1:7b',
+                    prompt: query,
+                    max_tokens: 500
+                })
+            });
+
+            if (!response.body) {
+                throw new Error('ReadableStream not supported in this browser.');
             }
-        });
 
-        // Detect manual scrolling
-        chatbox.addEventListener('scroll', () => {
-            const atBottom = chatbox.scrollHeight - chatbox.scrollTop === chatbox.clientHeight;
-            isUserScrolling = !atBottom;
-        });
+            // Remove the thinking message
+            chatbox.removeChild(thinkingMessageDiv);
 
-        // Add this new function for direct queries
-        async function sendDirectQuery(query) {
-            try {
-                stopButton.style.display = 'inline-block';
-                sendButton.disabled = true;
-                stopGeneration = false;
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let ollamaResponse = '';
 
-                const response = await fetch('http://localhost:11434/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        model: 'deepseek-r1:7b',
-                        prompt: query,
-                        max_tokens: 200
-                    })
-                });
+            // Create a new message div for Ollama's response
+            const ollamaMessageDiv = document.createElement('div');
+            ollamaMessageDiv.classList.add('chat-message', 'message-bot');
+            const ollamaContentDiv = document.createElement('div');
+            ollamaContentDiv.classList.add('message-content');
+            ollamaMessageDiv.appendChild(ollamaContentDiv);
+            const timeDiv = document.createElement('div');
+            timeDiv.classList.add('message-time');
+            const now = new Date();
+            timeDiv.textContent = now.getHours().toString().padStart(2, '0') + ':' + 
+                                 now.getMinutes().toString().padStart(2, '0');
+            ollamaMessageDiv.appendChild(timeDiv);
+            chatbox.appendChild(ollamaMessageDiv);
 
-                if (!response.body) {
-                    throw new Error('ReadableStream not supported in this browser.');
-                }
+            while (true) {
+                if (stopGeneration) break;
 
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder('utf-8');
-                let ollamaResponse = '';
+                const { done, value } = await reader.read();
+                if (done) break;
 
-                const ollamaMessageDiv = document.createElement('div');
-                ollamaMessageDiv.classList.add('mb-2', 'd-flex', 'justify-content-start');
-                const ollamaContentDiv = document.createElement('div');
-                ollamaContentDiv.classList.add('p-2', 'rounded');
-                ollamaContentDiv.style.maxWidth = '70%';
-                ollamaContentDiv.style.backgroundColor = '#f8d7da';
-                ollamaContentDiv.innerHTML = '<strong>Ollama:</strong> <span class="ollama-response"></span>';
-                ollamaMessageDiv.appendChild(ollamaContentDiv);
-                chatbox.appendChild(ollamaMessageDiv);
-                const responseSpan = ollamaContentDiv.querySelector('.ollama-response');
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split('\n');
 
-                while (true) {
-                    if (stopGeneration) break;
-
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    const chunk = decoder.decode(value, { stream: true });
-                    const lines = chunk.split('\n');
-
-                    for (const line of lines) {
-                        if (line.trim()) {
-                            try {
-                                const data = JSON.parse(line);
-                                if (data.response) {
-                                    ollamaResponse += data.response;
-                                    responseSpan.innerHTML = formatResponse(ollamaResponse);
-                                    if (!isUserScrolling) {
-                                        chatbox.scrollTop = chatbox.scrollHeight;
-                                    }
+                for (const line of lines) {
+                    if (line.trim()) {
+                        try {
+                            const data = JSON.parse(line);
+                            if (data.response) {
+                                ollamaResponse += data.response;
+                                ollamaContentDiv.innerHTML = formatResponse(ollamaResponse);
+                                
+                                // Auto-scroll to bottom unless user is manually scrolling
+                                if (!isUserScrolling) {
+                                    chatbox.scrollTop = chatbox.scrollHeight;
                                 }
-                            } catch (error) {
-                                console.error('Error parsing response line:', error);
                             }
+                        } catch (error) {
+                            console.error('Error parsing response line:', error);
                         }
                     }
                 }
-            } catch (error) {
-                console.error('Error communicating with Ollama API:', error);
-                appendMessage('Ollama', 'Sorry, there was an error processing your request.', false, 'left');
-            } finally {
-                stopButton.style.display = 'none';
-                sendButton.disabled = false;
+            }
+        } catch (error) {
+            console.error('Error communicating with Ollama API:', error);
+            appendMessage('Ollama', 'Sorry, there was an error processing your request.', false, 'left');
+        } finally {
+            stopButton.style.display = 'none'; // Hide the stop button
+            sendButton.style.display = 'inline-block';
+        }
+    }
+
+    // Event listener for ASK Cyberbot buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('askCyberbot') || e.target.closest('.askCyberbot')) {
+            const button = e.target.classList.contains('askCyberbot') ? e.target : e.target.closest('.askCyberbot');
+            const query = button.getAttribute('data-query');
+            if (query) {
+                sendDirectQuery(query);
             }
         }
+    });
 
-        // Replace both event listeners with this single one
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('askCyberbot')) {
-                if (!isChatOpen) {
-                    chatbotPopup.classList.add('show');
-                    isChatOpen = true;
-                }
-                
-                const query = e.target.getAttribute('data-query');
-                if (query) {
-                    sendDirectQuery(query);
-                }
-            }
-        });
-
-        // Replace the askCyberbot button handler
-        document.getElementById('askCyberbot').addEventListener('click', function() {
-            if (!isChatOpen) {
-                chatbotPopup.classList.add('show');
-                isChatOpen = true;
-            }
-            
-            const explanationData = JSON.parse('{{ explanations|tojson|safe }}');
-            const query = "From a Cybersecurity perspective, explain these technical terms to an 18-year-old aspiring security analyst:\n- " + 
-                        explanationData.join('\n- ');
+    // Handle the main askCyberbot button
+    document.getElementById('askCyberbot').addEventListener('click', function() {
+        const query = this.getAttribute('data-query');
+        if (query) {
             sendDirectQuery(query);
-        });
-    </script>
+        }
+    });
+
+    // Pie Chart Animation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the confidence value
+        const confidenceValueEl = document.querySelector('.result-item:nth-child(2) .result-value');
+        if (!confidenceValueEl) return;
+        
+        // Extract the confidence percentage (remove the % sign)
+        const confidenceTextz = confidenceValueEl.textContent.trim();
+        const confidenceValue = parseInt(confidenceTextz);
+        
+        if (isNaN(confidenceValue)) return;
+        
+        // Get the pie chart elements
+        const pieCover = document.querySelector('.pie-cover');
+        const confidenceText = document.querySelector('.confidence-text');
+        
+        // Start the animation after a short delay
+        setTimeout(() => {
+            // Animate the confidence text
+            let currentValue = 0;
+            const duration = 1500; // 1.5 seconds
+            const interval = 20; // Update every 20ms
+            const steps = duration / interval;
+            const increment = confidenceValue / steps;
+            
+            const counter = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= confidenceValue) {
+                    currentValue = confidenceValue;
+                    clearInterval(counter);
+                }
+                confidenceText.textContent = `${Math.round(currentValue)}%`;
+            }, interval);
+            
+            // Calculate the rotation based on the confidence percentage
+            const rotation = (confidenceValue / 100) * 360;
+            
+            // For the first half of the circle (0-180 degrees)
+            if (rotation <= 180) {
+                pieCover.style.transform = `rotate(${rotation}deg)`;
+            } else {
+                // For the second half of the circle (180-360 degrees)
+                pieCover.style.transform = 'rotate(180deg)';
+                
+                // We need to adjust the right side cover
+                setTimeout(() => {
+                    pieCover.style.background = 'transparent';
+                    pieCover.style.zIndex = '1';
+                    
+                    // Create a new cover for the left side
+                    const leftCover = document.createElement('div');
+                    leftCover.className = 'pie-cover';
+                    leftCover.style.left = '0';
+                    leftCover.style.right = 'auto';
+                    leftCover.style.transformOrigin = 'right center';
+                    leftCover.style.transform = 'rotate(0deg)';
+                    leftCover.style.zIndex = '20';
+                    
+                    document.querySelector('.pie-chart').appendChild(leftCover);
+                    
+                    // Animate the left cover
+                    setTimeout(() => {
+                        leftCover.style.transform = `rotate(${rotation - 180}deg)`;
+                    }, 50);
+                }, 1500);
+            }
+        }, 500);
+    });
+</script>
 </body>
 </html>

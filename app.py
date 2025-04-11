@@ -319,7 +319,7 @@ def predict():
         top_pcs = np.argsort(np.abs(shap_values_single).mean(0))[::-1][:3]  # Top 3 components
         bar_text = (
             f"The most significant principal components influencing this prediction were:"
-            f"{', '.join([f'PC{i+1} ({shap_values_single[0,i]:.2f})' for i in top_pcs])}. "
+            f"{', '.join([f'<strong>PC{i+1} ({shap_values_single[0,i]:.2f})</strong>' for i in top_pcs])}."
             "Longer bars indicate greater impact on the model's decision."
         )
         
@@ -393,13 +393,11 @@ def predict():
             top_global_pcs = [f"PC{i+1}" for i in top_global_indices]
             
             # First format the components with line breaks
-            components_list = '\n'.join([f'- {pc}' for pc in top_global_pcs])
+            components_list = '<br>'.join([f'- <strong>{pc}</strong>' for pc in top_global_pcs])
 
-            # Then use in the f-string
             global_explanation = f"""
-            The model's decision-making process is primarily influenced by these key principal components:
-            {components_list}
-
+            <strong>The model's decision-making process is primarily influenced by these key principal components:</strong><br>
+            {components_list}<br><br>
             These components represent the most impactful network traffic patterns identified through PCA analysis, 
             capturing the essential characteristics that differentiate normal behavior from various attack types 
             across all predictions in the intrusion detection system.

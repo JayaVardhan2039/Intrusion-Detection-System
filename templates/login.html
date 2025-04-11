@@ -5,10 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: url('/static0/space-wallpaper-stars-background.mp4') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            padding: 10rem;
+            position: relative;
+        }
+        #bg-video {
+            position: fixed;
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            width: 100vh;
+            height: 100vw;
+        }
+        .form-control, .btn {
+            transition: all 0.3s ease;
+        }
+    </style>
 </head>
 <body class="d-flex justify-content-center align-items-center vh-100">
+    <video autoplay muted loop id="bg-video">
+        <source src="/static0/hyperdrive-space-jump-background-animated-video-loop-copyright-free-full-hd-1920-ytshorts.savetube.me.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
     <div class="container text-center">
-        <h2>Login to Intrusion Detection System</h2>
+        <h2 style="color: aliceblue;">Login to Network Intrusion Detection System</h2>
         <form method="POST" action="/login" class="mt-4">
             <div class="mb-3">
                 <input type="text" name="username" class="form-control" placeholder="Username" required>
@@ -22,5 +50,32 @@
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
     </div>
+
+    <script>
+        const video = document.getElementById('bg-video');
+        // Set initial fast playback speed
+        video.playbackRate = 8.0;
+
+        // Get all interactive elements
+        const interactiveElements = document.querySelectorAll(
+            'h2, input, button,.form-control, .btn'
+        );
+
+        // Add event listeners to all interactive elements
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                video.playbackRate = 2.0;
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                video.playbackRate = 8.0;
+            });
+        });
+
+        // Ensure video maintains play state when interacting
+        document.addEventListener('DOMContentLoaded', () => {
+            video.play();
+        });
+    </script>
 </body>
 </html>
